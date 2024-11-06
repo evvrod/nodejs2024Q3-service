@@ -1,0 +1,181 @@
+openapi: 3.0.0
+info:
+  title: API Documentation
+  description: API description and available endpoints
+  version: '1.0'
+  contact: {}
+servers:
+  - url: http://localhost:4000/api
+    description: Local development server
+components:
+  schemas:
+    ResponseUserDto:
+      type: object
+      properties:
+        id:
+          type: string
+          description: Unique identifier of the user
+          example: b46dbb69-4b3b-4119-9f8a-45ec02a02863
+          format: uuid
+        login:
+          type: string
+          description: Login or username of the user
+          example: TestUser
+        version:
+          type: number
+          description: Version number for the user record
+          example: 1
+        createdAt:
+          type: number
+          description: Timestamp of when the user was created
+          example: 1605000000
+        updatedAt:
+          type: number
+          description: Timestamp of when the user was created
+          example: 1655000000
+      required:
+        - id
+        - login
+        - version
+        - createdAt
+        - updatedAt
+    CreateUserDto:
+      type: object
+      properties:
+        login:
+          type: string
+          description: Login of the user
+          example: TestUser
+        password:
+          type: string
+          description: Password for the user
+          example: TestPassword
+      required:
+        - login
+        - password
+    UpdatePasswordDto:
+      type: object
+      properties:
+        oldPassword:
+          type: string
+          description: Old password
+        newPassword:
+          type: string
+          description: New password
+      required:
+        - oldPassword
+        - newPassword
+paths:
+  /user:
+    get:
+      operationId: UserController_findAll
+      parameters: []
+      responses:
+        '200':
+          description: Successfully fetched all users.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/ResponseUserDto'
+      summary: Get all users
+      tags: &ref_0
+        - user
+    post:
+      operationId: UserController_create
+      parameters: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateUserDto'
+      responses:
+        '201':
+          description: User created successfully.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ResponseUserDto'
+        '400':
+          description: Bad request. Login and Password are required
+      summary: Create a new user
+      tags: *ref_0
+  /user/{id}:
+    get:
+      operationId: UserController_findOne
+      parameters:
+        - name: id
+          required: true
+          in: path
+          description: User ID in UUID format
+          schema:
+            format: uuid
+            example: b46dbb69-4b3b-4119-9f8a-45ec02a02863
+            type: string
+      responses:
+        '200':
+          description: User found.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ResponseUserDto'
+        '400':
+          description: Bad request. userId is invalid (not uuid)
+        '404':
+          description: User not found
+      summary: Get user by ID
+      tags: *ref_0
+    put:
+      operationId: UserController_update
+      parameters:
+        - name: id
+          required: true
+          in: path
+          description: User ID in UUID format
+          schema:
+            format: uuid
+            example: b46dbb69-4b3b-4119-9f8a-45ec02a02863
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdatePasswordDto'
+      responses:
+        '200':
+          description: Password updated successfully.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ResponseUserDto'
+        '400':
+          description: Bad request. userId is invalid (not uuid)
+        '403':
+          description: Forbidden. Old password is incorrect.
+        '404':
+          description: User not found
+      summary: Update user password
+      tags: *ref_0
+    delete:
+      operationId: UserController_remove
+      parameters:
+        - name: id
+          required: true
+          in: path
+          description: User ID in UUID format
+          schema:
+            format: uuid
+            example: b46dbb69-4b3b-4119-9f8a-45ec02a02863
+            type: string
+      responses:
+        '204':
+          description: User deleted successfully.
+        '400':
+          description: Bad request. userId is invalid (not uuid)
+        '404':
+          description: User not found
+      summary: Delete user by ID
+      tags: *ref_0
