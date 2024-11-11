@@ -1,5 +1,7 @@
 # Home Library Service
 
+This application allows you to manage and interact with a digital library through a RESTful API. OpenAPI documentation is available to provide detailed information about each endpoint.
+
 ## Prerequisites
 
 - Git - [Download & Install Git](https://git-scm.com/downloads).
@@ -17,15 +19,45 @@ git clone {repository URL}
 npm install
 ```
 
+## Environment Variables
+
+The application uses environment variables to configure its behavior. Create a `.env` file in the root directory and set the following variables:
+
+- `PORT` (default: `4000`): Specifies the port the server will run on.
+- `DATABASE_URL`: The URL for connecting to the database.
+- `JWT_SECRET`: Secret key for JSON Web Token (JWT) authentication.
+
+Example `.env` file:
+
+```env
+PORT=4000
+DATABASE_URL=your_database_url
+JWT_SECRET=your_secret_key
+```
+
 ## Running application
 
 ```
 npm start
 ```
 
-After starting the app on port (4000 as default) you can open
-in your browser OpenAPI documentation by typing http://localhost:4000/doc/.
+## API Documentation
+
+The Home Library Service exposes endpoints to manage tracks, albums, and artists. For detailed information, refer to the OpenAPI documentation available at: (http://localhost:4000/api-docs/)
+
 For more information about OpenAPI/Swagger please visit https://swagger.io/.
+
+### Example API Requests
+
+To test the endpoints, here are some example API requests using `curl`:
+
+```bash
+# Add a track to favorites
+curl -X POST http://localhost:4000/favs/track/{trackId}
+
+# Get all favorite items
+curl -X GET http://localhost:4000/favs G
+```
 
 ## Testing
 
@@ -34,7 +66,9 @@ After application running open new terminal and enter:
 To run all tests without authorization
 
 ```
+
 npm run test
+
 ```
 
 To run only one of all test suites
