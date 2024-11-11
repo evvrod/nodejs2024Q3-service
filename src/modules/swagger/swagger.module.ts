@@ -12,7 +12,7 @@ export class SwaggerConfig {
       .setTitle('API Documentation')
       .setDescription('API description and available endpoints')
       .setVersion('1.0')
-      .addServer('http://localhost:4000/api', 'Local development server')
+      .addServer('http://localhost:4000/api-docs', 'Local development server')
       .build();
 
     const document = SwaggerModule.createDocument(app, config);
