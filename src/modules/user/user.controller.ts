@@ -24,7 +24,7 @@ import { UpdatePasswordDto } from './dto/update-password.dto';
 import { ResponseUserDto } from './dto/user-response.dto';
 import { UserIdDto } from './dto/user-id.dto';
 
-@ApiTags('user')
+@ApiTags('Users')
 @Controller('user')
 export class UserController {
   constructor(private readonly userService: UserService) {}

@@ -25,7 +25,7 @@ import { UpdateArtistDto } from './dto/update-artist.dto';
 import { ArtistIdDto } from './dto/artist-id.dto';
 import { Artist } from './entities/artist.entity';
 
-@ApiTags('artist')
+@ApiTags('Artists')
 @Controller('artist')
 export class ArtistController {
   constructor(private readonly artistService: ArtistService) {}

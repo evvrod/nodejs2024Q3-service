@@ -25,7 +25,7 @@ import { UpdateTrackDto } from './dto/update-track.dto';
 import { TrackIdDto } from './dto/track-id.dto';
 import { Track } from './entities/track.entity';
 
-@ApiTags('track')
+@ApiTags('Tracks')
 @Controller('track')
 export class TrackController {
   constructor(private readonly trackService: TrackService) {}

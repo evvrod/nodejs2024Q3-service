@@ -248,6 +248,53 @@ components:
           type: number
           description: Duration of the track in seconds
           example: 354
+    GetAllFavoritesResponseDto:
+      type: object
+      properties:
+        artists:
+          description: List of favorite artists
+          example:
+            - id: 123e4567-e89b-12d3-a456-426614174000
+              name: John Doe
+              grammy: true
+          type: array
+          items:
+            $ref: '#/components/schemas/Artist'
+        albums:
+          description: List of favorite albums
+          example:
+            - id: 123e4567-e89b-12d3-a456-426614174001
+              name: Greatest Hits
+              year: 2020
+              artistId: 123e4567-e89b-12d3-a456-426614174000
+          type: array
+          items:
+            $ref: '#/components/schemas/Album'
+        tracks:
+          description: List of favorite tracks
+          example:
+            - id: 123e4567-e89b-12d3-a456-426614174002
+              name: Hit Song
+              artistId: 123e4567-e89b-12d3-a456-426614174000
+              albumId: 123e4567-e89b-12d3-a456-426614174001
+              duration: 240
+          type: array
+          items:
+            $ref: '#/components/schemas/Track'
+      required:
+        - artists
+        - albums
+        - tracks
+    IdParamDto:
+      type: object
+      properties:
+        id:
+          type: string
+          description: Unique identifier
+          example: b46dbb69-4b3b-4119-9f8a-45ec02a02863
+          format: uuid
+      required:
+        - id
 paths:
   /user:
     get:
@@ -264,7 +311,7 @@ paths:
                   $ref: '#/components/schemas/ResponseUserDto'
       summary: Get all users
       tags: &ref_0
-        - user
+        - Users
     post:
       operationId: UserController_create
       parameters: []
@@ -377,7 +424,7 @@ paths:
                   $ref: '#/components/schemas/Artist'
       summary: Get all artists
       tags: &ref_1
-        - artist
+        - Artists
     post:
       operationId: ArtistController_create
       parameters: []
@@ -488,7 +535,7 @@ paths:
                   $ref: '#/components/schemas/Album'
       summary: Get all albums
       tags: &ref_2
-        - album
+        - Albums
     post:
       operationId: AlbumController_create
       parameters: []
@@ -599,7 +646,7 @@ paths:
                   $ref: '#/components/schemas/Track'
       summary: Get all tracks
       tags: &ref_3
-        - track
+        - Tracks
     post:
       operationId: TrackController_create
       parameters: []
@@ -691,3 +738,128 @@ paths:
           description: Track with the specified ID not found.
       summary: Delete a track
       tags: *ref_3
+  /favs:
+    get:
+      operationId: FavController_findAll
+      parameters: []
+      responses:
+        '200':
+          description: List of all favorite items
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GetAllFavoritesResponseDto'
+      summary: Retrieve all favorites
+      tags: &ref_4
+        - Favorites
+  /favs/track/{id}:
+    post:
+      operationId: FavController_addTrackToFavorites
+      parameters:
+        - name: id
+          required: true
+          in: path
+          description: Track ID
+          schema:
+            $ref: '#/components/schemas/IdParamDto'
+      responses:
+        '201':
+          description: Track added to favorites
+        '400':
+          description: Invalid trackId format (not a UUID).
+        '422':
+          description: Track with the specified ID does not exist.
+      summary: Add a track to favorites
+      tags: *ref_4
+    delete:
+      operationId: FavController_removeTrackFromFavorites
+      parameters:
+        - name: id
+          required: true
+          in: path
+          description: Track ID
+          schema:
+            $ref: '#/components/schemas/IdParamDto'
+      responses:
+        '204':
+          description: Track removed from favorites
+        '400':
+          description: Invalid trackId format (not a UUID).
+        '404':
+          description: Track with the specified ID not found in favorites.
+      summary: Remove a track from favorites
+      tags: *ref_4
+  /favs/album/{id}:
+    post:
+      operationId: FavController_addAlbumToFavorites
+      parameters:
+        - name: id
+          required: true
+          in: path
+          description: Album ID
+          schema:
+            $ref: '#/components/schemas/IdParamDto'
+      responses:
+        '201':
+          description: Album added to favorites
+        '400':
+          description: Invalid albumId format (not a UUID).
+        '422':
+          description: Album with the specified ID does not exist.
+      summary: Add an album to favorites
+      tags: *ref_4
+    delete:
+      operationId: FavController_removeAlbumFromFavorites
+      parameters:
+        - name: id
+          required: true
+          in: path
+          description: Album ID
+          schema:
+            $ref: '#/components/schemas/IdParamDto'
+      responses:
+        '204':
+          description: Album removed from favorites
+        '400':
+          description: Invalid albumId format (not a UUID).
+        '404':
+          description: Album with the specified ID not found in favorites.
+      summary: Remove an album from favorites
+      tags: *ref_4
+  /favs/artist/{id}:
+    post:
+      operationId: FavController_addArtistToFavorites
+      parameters:
+        - name: id
+          required: true
+          in: path
+          description: Artist ID
+          schema:
+            $ref: '#/components/schemas/IdParamDto'
+      responses:
+        '201':
+          description: Artist added to favorites
+        '400':
+          description: Invalid artistId format (not a UUID).
+        '422':
+          description: Artist with the specified ID does not exist.
+      summary: Add an artist to favorites
+      tags: *ref_4
+    delete:
+      operationId: FavController_removeArtistFromFavorites
+      parameters:
+        - name: id
+          required: true
+          in: path
+          description: Artist ID
+          schema:
+            $ref: '#/components/schemas/IdParamDto'
+      responses:
+        '204':
+          description: Artist removed from favorites
+        '400':
+          description: Invalid artistId format (not a UUID).
+        '404':
+          description: Artist with the specified ID not found in favorites.
+      summary: Remove an artist from favorites
+      tags: *ref_4
