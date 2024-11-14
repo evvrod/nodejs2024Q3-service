@@ -37,8 +37,8 @@ export class ArtistController {
     description: 'List of all artists.',
     type: [Artist],
   })
-  findAll() {
-    return this.artistService.findAll();
+  async findAll() {
+    return await this.artistService.findAll();
   }
 
   @Get(':id')
@@ -58,14 +58,14 @@ export class ArtistController {
     status: HttpStatus.BAD_REQUEST,
     description: 'Bad request. Invalid artist id (not uuid).',
   })
-  findOne(@Param() params: ArtistIdDto) {
-    const artist = this.artistService.findOne(params.id);
+  async findOne(@Param() params: ArtistIdDto) {
+    const artist = await this.artistService.findOne(params.id);
 
     if (!artist) {
       throw new NotFoundException(`Artist with id ${params.id} not found`);
     }
 
-    return this.artistService.findOne(params.id);
+    return await this.artistService.findOne(params.id);
   }
 
   @Post()
@@ -82,8 +82,8 @@ export class ArtistController {
     status: HttpStatus.BAD_REQUEST,
     description: 'Bad request. Missing required fields.',
   })
-  create(@Body() createArtistDto: CreateArtistDto) {
-    return this.artistService.create(createArtistDto);
+  async create(@Body() createArtistDto: CreateArtistDto) {
+    return await this.artistService.create(createArtistDto);
   }
 
   @Put(':id')
@@ -104,11 +104,11 @@ export class ArtistController {
     status: HttpStatus.NOT_FOUND,
     description: 'Artist with the given id not found.',
   })
-  update(
+  async update(
     @Param() params: ArtistIdDto,
     @Body() updateArtistDto: UpdateArtistDto,
   ) {
-    return this.artistService.update(params.id, updateArtistDto);
+    return await this.artistService.update(params.id, updateArtistDto);
   }
 
   @Delete(':id')
@@ -128,7 +128,7 @@ export class ArtistController {
     status: HttpStatus.NOT_FOUND,
     description: 'Artist with the given id not found.',
   })
-  remove(@Param() params: ArtistIdDto) {
-    return this.artistService.remove(params.id);
+  async remove(@Param() params: ArtistIdDto) {
+    return await this.artistService.remove(params.id);
   }
 }

@@ -3,12 +3,12 @@ import { CreateUserDto } from '../dto/create-user.dto';
 import { UpdatePasswordDto } from '../dto/update-password.dto';
 
 export interface IUserStore {
-  getAllUsers: () => void;
-  getUserById: (id: string) => ResponseUserDto | undefined;
-  createUser: (createUserDto: CreateUserDto) => ResponseUserDto;
+  getAllUsers: () => Promise<ResponseUserDto[]>;
+  getUserById: (id: string) => Promise<ResponseUserDto | undefined>;
+  createUser: (createUserDto: CreateUserDto) => Promise<ResponseUserDto>;
   updatePassword: (
     id: string,
     updatePasswordDto: UpdatePasswordDto,
-  ) => ResponseUserDto;
-  deleteUser: (id: string) => void;
+  ) => Promise<ResponseUserDto>;
+  deleteUser: (id: string) => Promise<void>;
 }

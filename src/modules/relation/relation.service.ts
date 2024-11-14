@@ -14,55 +14,55 @@ export class RelationService {
     @Inject(forwardRef(() => FavService)) private favService: FavService,
   ) {}
 
-  removeArtistReferences(artistId: string) {
-    this.albumService.removeArtistReferences(artistId);
-    this.trackService.removeArtistReferences(artistId);
-    if (this.favService.hasArtistInFavorites(artistId)) {
-      this.favService.removeArtistFromFavorites(artistId);
+  async removeArtistReferences(artistId: string) {
+    await this.albumService.removeArtistReferences(artistId);
+    await this.trackService.removeArtistReferences(artistId);
+    if (await this.favService.hasArtistInFavorites(artistId)) {
+      await this.favService.removeArtistFromFavorites(artistId);
     }
   }
 
-  removeAlbumReferences(albumId: string) {
-    this.trackService.removeAlbumReferences(albumId);
-    if (this.favService.hasAlbumInFavorites(albumId)) {
-      this.favService.removeAlbumFromFavorites(albumId);
+  async removeAlbumReferences(albumId: string) {
+    await this.trackService.removeAlbumReferences(albumId);
+    if (await this.favService.hasAlbumInFavorites(albumId)) {
+      await this.favService.removeAlbumFromFavorites(albumId);
     }
   }
 
-  removeTrackReferences(trackId: string) {
-    if (this.favService.hasTrackInFavorites(trackId)) {
-      this.favService.removeTrackFromFavorites(trackId);
+  async removeTrackReferences(trackId: string) {
+    if (await this.favService.hasTrackInFavorites(trackId)) {
+      await this.favService.removeTrackFromFavorites(trackId);
     }
   }
 
-  hasArtist(artistId: string) {
-    const artist = this.artistService.findOne(artistId);
+  async hasArtist(artistId: string) {
+    const artist = await this.artistService.findOne(artistId);
     return !!artist;
   }
 
-  hasAlbum(albumId: string) {
-    const album = this.albumService.findOne(albumId);
+  async hasAlbum(albumId: string) {
+    const album = await this.albumService.findOne(albumId);
     return !!album;
   }
 
-  hasTrack(trackId: string) {
-    const track = this.trackService.findOne(trackId);
+  async hasTrack(trackId: string) {
+    const track = await this.trackService.findOne(trackId);
     return !!track;
   }
 
-  findArtist(artistId: string) {
-    return this.artistService.findOne(artistId);
+  async findArtist(artistId: string) {
+    return await this.artistService.findOne(artistId);
   }
 
-  findAlbum(albumId: string) {
-    return this.albumService.findOne(albumId);
+  async findAlbum(albumId: string) {
+    return await this.albumService.findOne(albumId);
   }
 
-  findTrack(trackId: string) {
-    return this.trackService.findOne(trackId);
+  async findTrack(trackId: string) {
+    return await this.trackService.findOne(trackId);
   }
 
-  handleTrackDeletion(trackId: string) {
-    this.favService.removeTrackFromFavorites(trackId);
+  async handleTrackDeletion(trackId: string) {
+    await this.favService.removeTrackFromFavorites(trackId);
   }
 }

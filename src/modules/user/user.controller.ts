@@ -36,8 +36,8 @@ export class UserController {
     description: 'Successfully fetched all users.',
     type: [ResponseUserDto],
   })
-  findAll() {
-    return this.userService.findAll();
+  async findAll() {
+    return await this.userService.findAll();
   }
 
   @Get(':id')
@@ -62,8 +62,8 @@ export class UserController {
     description: 'User not found',
   })
   @UsePipes(new ValidationPipe())
-  findOne(@Param() params: UserIdDto) {
-    return this.userService.findOne(params.id);
+  async findOne(@Param() params: UserIdDto) {
+    return await this.userService.findOne(params.id);
   }
 
   @Post()
@@ -80,8 +80,8 @@ export class UserController {
     description: 'Bad request. Login and Password are required',
   })
   @HttpCode(HttpStatus.CREATED)
-  create(@Body() createUserDto: CreateUserDto) {
-    return this.userService.create(createUserDto);
+  async create(@Body() createUserDto: CreateUserDto) {
+    return await this.userService.create(createUserDto);
   }
 
   @Put(':id')
@@ -110,11 +110,11 @@ export class UserController {
     description: 'Forbidden. Old password is incorrect.',
   })
   @UsePipes(new ValidationPipe())
-  update(
+  async update(
     @Param() params: UserIdDto,
     @Body() updatePasswordDto: UpdatePasswordDto,
   ) {
-    return this.userService.update(params.id, updatePasswordDto);
+    return await this.userService.update(params.id, updatePasswordDto);
   }
 
   @Delete(':id')
@@ -139,7 +139,7 @@ export class UserController {
   })
   @UsePipes(new ValidationPipe())
   @HttpCode(HttpStatus.NO_CONTENT)
-  remove(@Param() params: UserIdDto) {
-    return this.userService.remove(params.id);
+  async remove(@Param() params: UserIdDto) {
+    return await this.userService.remove(params.id);
   }
 }

@@ -37,8 +37,8 @@ export class AlbumController {
     description: 'Successfully fetched all albums.',
     type: [Album],
   })
-  findAll() {
-    return this.albumService.findAll();
+  async findAll() {
+    return await this.albumService.findAll();
   }
 
   @Get(':id')
@@ -62,14 +62,14 @@ export class AlbumController {
     status: HttpStatus.NOT_FOUND,
     description: 'Album with the given id not found.',
   })
-  findOne(@Param() params: AlbumIdDto) {
-    const album = this.albumService.findOne(params.id);
+  async findOne(@Param() params: AlbumIdDto) {
+    const album = await this.albumService.findOne(params.id);
 
     if (!album) {
       throw new NotFoundException(`Album with id ${params.id} not found`);
     }
 
-    return album;
+    return await album;
   }
 
   @Post()
@@ -85,8 +85,8 @@ export class AlbumController {
     description: 'Bad request. The body is missing required fields.',
   })
   @HttpCode(HttpStatus.CREATED)
-  create(@Body() createAlbumDto: CreateAlbumDto) {
-    return this.albumService.create(createAlbumDto);
+  async create(@Body() createAlbumDto: CreateAlbumDto) {
+    return await this.albumService.create(createAlbumDto);
   }
 
   @Put(':id')
@@ -107,8 +107,11 @@ export class AlbumController {
     status: HttpStatus.NOT_FOUND,
     description: 'Album with the given id not found.',
   })
-  update(@Param() params: AlbumIdDto, @Body() updateAlbumDto: UpdateAlbumDto) {
-    return this.albumService.update(params.id, updateAlbumDto);
+  async update(
+    @Param() params: AlbumIdDto,
+    @Body() updateAlbumDto: UpdateAlbumDto,
+  ) {
+    return await this.albumService.update(params.id, updateAlbumDto);
   }
 
   @Delete(':id')
@@ -128,7 +131,7 @@ export class AlbumController {
     description: 'Album with the given id not found.',
   })
   @HttpCode(HttpStatus.NO_CONTENT)
-  remove(@Param() params: AlbumIdDto) {
-    return this.albumService.remove(params.id);
+  async remove(@Param() params: AlbumIdDto) {
+    return await this.albumService.remove(params.id);
   }
 }

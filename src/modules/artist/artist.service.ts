@@ -7,23 +7,23 @@ import { IArtistStore } from './interfaces/artist-store.interface';
 export class ArtistService {
   constructor(@Inject('IArtistStore') private storage: IArtistStore) {}
 
-  create(createUserDto: CreateArtistDto) {
-    return this.storage.createArtist(createUserDto);
+  async create(createUserDto: CreateArtistDto) {
+    return await this.storage.createArtist(createUserDto);
   }
 
-  findAll() {
-    return this.storage.getAllArtists();
+  async findAll() {
+    return await this.storage.getAllArtists();
   }
 
-  findOne(id: string) {
-    return this.storage.getArtistById(id);
+  async findOne(id: string) {
+    return await this.storage.getArtistById(id);
   }
 
-  update(id: string, updateArtistDto: UpdateArtistDto) {
-    return this.storage.updateArtist(id, updateArtistDto);
+  async update(id: string, updateArtistDto: UpdateArtistDto) {
+    return await this.storage.updateArtist(id, updateArtistDto);
   }
 
-  remove(id: string) {
-    return this.storage.deleteArtist(id);
+  async remove(id: string) {
+    return await this.storage.deleteArtist(id);
   }
 }

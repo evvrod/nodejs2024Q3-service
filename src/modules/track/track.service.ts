@@ -7,31 +7,31 @@ import { ITrackStore } from './interfaces/track-store.interface';
 export class TrackService {
   constructor(@Inject('ITrackStore') private storage: ITrackStore) {}
 
-  create(createTrackDto: CreateTrackDto) {
-    return this.storage.createTrack(createTrackDto);
+  async create(createTrackDto: CreateTrackDto) {
+    return await this.storage.createTrack(createTrackDto);
   }
 
-  findAll() {
-    return this.storage.getAllTracks();
+  async findAll() {
+    return await this.storage.getAllTracks();
   }
 
-  findOne(id: string) {
-    return this.storage.getTrackById(id);
+  async findOne(id: string) {
+    return await this.storage.getTrackById(id);
   }
 
-  update(id: string, updateTrackDto: UpdateTrackDto) {
-    return this.storage.updateTrack(id, updateTrackDto);
+  async update(id: string, updateTrackDto: UpdateTrackDto) {
+    return await this.storage.updateTrack(id, updateTrackDto);
   }
 
-  remove(id: string) {
-    return this.storage.deleteTrack(id);
+  async remove(id: string) {
+    return await this.storage.deleteTrack(id);
   }
 
-  removeArtistReferences(artistId: string) {
-    this.storage.removeArtistReferences(artistId);
+  async removeArtistReferences(artistId: string) {
+    await this.storage.removeArtistReferences(artistId);
   }
 
-  removeAlbumReferences(albumId: string) {
-    this.storage.removeAlbumReferences(albumId);
+  async removeAlbumReferences(albumId: string) {
+    await this.storage.removeAlbumReferences(albumId);
   }
 }

@@ -3,11 +3,11 @@ import { CreateAlbumDto } from '../dto/create-album.dto';
 import { UpdateAlbumDto } from '../dto/update-album.dto';
 
 export interface IAlbumStore {
-  getAllAlbums: () => void;
-  getAlbumById: (id: string) => Album | undefined;
-  createAlbum: (createAlbumDto: CreateAlbumDto) => Album;
-  updateAlbum: (id: string, updateAlbumDto: UpdateAlbumDto) => Album;
-  deleteAlbum: (id: string) => void;
-  hasAlbum: (id: string) => boolean;
-  removeArtistReferences: (artistId: string) => void;
+  getAllAlbums: () => Promise<Album[]>;
+  getAlbumById: (id: string) => Promise<Album | undefined>;
+  createAlbum: (createAlbumDto: CreateAlbumDto) => Promise<Album>;
+  updateAlbum: (id: string, updateAlbumDto: UpdateAlbumDto) => Promise<Album>;
+  deleteAlbum: (id: string) => Promise<void>;
+  hasAlbum: (id: string) => Promise<boolean>;
+  removeArtistReferences: (artistId: string) => Promise<void>;
 }
