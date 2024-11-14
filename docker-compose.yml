@@ -1,0 +1,41 @@
+services:
+  server:
+    build:
+      context: ./
+      dockerfile: ./docker/dockerfile
+      args:
+        DB_URL: "${DB_URL}" 
+    ports:
+      - "${SERVER_PORT}:${SERVER_PORT}"
+    environment:
+      SERVER_PORT: "${SERVER_PORT}"
+      DB_URL: "${DB_URL}"
+      USE_IN_MEMORY_DB: "${USE_IN_MEMORY_DB}"
+    depends_on:
+      - db
+    networks:
+      - mynetwork
+  db:
+    build:
+      context: ./bd
+      dockerfile: ./docker/dockerfile
+    container_name: my_postgres
+    environment:
+      POSTGRES_USER: "${DB_USER}"
+      POSTGRES_PASSWORD: "${DB_PASSWORD}"
+      POSTGRES_DB: "${DB_NAME}"
+      DB_PORT: "${DB_PORT}"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    ports:
+      - "${DB_PORT}:${DB_PORT}"
+    networks:
+      - mynetwork
+
+volumes:
+  postgres_data:
+    driver: local
+
+networks:
+  mynetwork:
+    driver: bridge
