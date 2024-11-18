@@ -8,7 +8,7 @@ async function bootstrap() {
   const configService = await NestFactory.create(AppModule).then((app) =>
     app.get(ConfigService),
   );
-  const port = configService.get<number>('PORT', 4000);
+  const port = configService.get<number>('SERVER_PORT', 4000);
   const useInMemoryDb =
     configService.get<string>('USE_IN_MEMORY_DB') === 'true';
 

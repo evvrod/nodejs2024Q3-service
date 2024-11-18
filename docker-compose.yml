@@ -13,14 +13,35 @@ services:
       - postgres_data:/var/lib/postgresql/data
       - postgres_logs:/var/lib/postgresql
     ports:
-      - '${DB_PORT}:${DB_PORT}'
+      - ${DB_PORT}:${DB_PORT}
+    restart: always
+    networks:
+      - mynetwork
+
+  server:
+    build:
+      context: ./
+      dockerfile: ./docker/dockerfile
+      args:
+        DB_URL: '${DB_URL}'
+    container_name: my_server
+    environment:
+      SERVER_PORT: '${SERVER_PORT}'
+      DB_URL: '${DB_URL}'
+      USE_IN_MEMORY_DB: '${USE_IN_MEMORY_DB}'
+    ports:
+      - ${SERVER_PORT}:${SERVER_PORT}
+    volumes:
+      - ./src:/app/src
+    depends_on:
+      - db
     restart: on-failure
     networks:
       - mynetwork
 
 volumes:
   postgres_data:
-  postgres_logs: 
+  postgres_logs:
 
 networks:
   mynetwork:
