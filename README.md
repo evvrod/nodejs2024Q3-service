@@ -44,13 +44,9 @@ With Docker
 To run the application with Docker, use the following command:
 
 ```
-npm run start:docker
+npm run docker:build
+npm run docker:start
 ```
-The start:docker script performs the following steps:
-
-- Generates Prisma client code.
-- Applies database migrations.
-- Starts the application.
 
 Ensure that Docker is running on your system before executing the command.
 
