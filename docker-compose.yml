@@ -1,0 +1,27 @@
+services:
+  db:
+    build:
+      context: ./db
+      dockerfile: ./docker/dockerfile
+    container_name: my_postgres
+    environment:
+      POSTGRES_USER: '${DB_USER}'
+      POSTGRES_PASSWORD: '${DB_PASSWORD}'
+      POSTGRES_DB: '${DB_NAME}'
+      DB_PORT: '${DB_PORT}'
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - postgres_logs:/var/lib/postgresql
+    ports:
+      - '${DB_PORT}:${DB_PORT}'
+    restart: on-failure
+    networks:
+      - mynetwork
+
+volumes:
+  postgres_data:
+  postgres_logs: 
+
+networks:
+  mynetwork:
+    driver: bridge
