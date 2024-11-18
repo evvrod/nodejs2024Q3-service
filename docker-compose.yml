@@ -19,11 +19,10 @@ services:
       - mynetwork
 
   server:
-    build:
-      context: ./
-      dockerfile: ./docker/dockerfile
-      args:
-        DB_URL: '${DB_URL}'
+    # build:
+    #   context: ./
+    #   dockerfile: ./dockerfile
+    image: evvrod/nodejs2024q3-service-server:latest
     container_name: my_server
     environment:
       SERVER_PORT: '${SERVER_PORT}'
