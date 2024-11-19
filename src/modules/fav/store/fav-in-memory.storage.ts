@@ -14,34 +14,40 @@ export class FavInMemoryStorage implements IFavStore {
 
   constructor(private readonly relationService: RelationService) {}
 
-  getAllFavorites() {
+  async getAllFavorites() {
+    const [artists, albums, tracks] = await Promise.all([
+      Promise.all(
+        this.favorites.artists.map((id) => this.relationService.findArtist(id)),
+      ).then((result) => result.filter(Boolean)),
+      Promise.all(
+        this.favorites.albums.map((id) => this.relationService.findAlbum(id)),
+      ).then((result) => result.filter(Boolean)),
+      Promise.all(
+        this.favorites.tracks.map((id) => this.relationService.findTrack(id)),
+      ).then((result) => result.filter(Boolean)),
+    ]);
+
     return {
-      artists: this.favorites.artists
-        .map((id) => this.relationService.findArtist(id))
-        .filter(Boolean),
-      albums: this.favorites.albums
-        .map((id) => this.relationService.findAlbum(id))
-        .filter(Boolean),
-      tracks: this.favorites.tracks
-        .map((id) => this.relationService.findTrack(id))
-        .filter(Boolean),
+      artists,
+      albums,
+      tracks,
     };
   }
 
-  hasArtistInFavorites(artistId: string) {
+  async hasArtistInFavorites(artistId: string) {
     return this.favorites.artists.includes(artistId);
   }
 
-  hasAlbumInFavorites(albumId: string) {
+  async hasAlbumInFavorites(albumId: string) {
     return this.favorites.albums.includes(albumId);
   }
 
-  hasTrackInFavorites(trackId: string) {
+  async hasTrackInFavorites(trackId: string) {
     return this.favorites.tracks.includes(trackId);
   }
 
-  addTrackToFavorites(trackId: string) {
-    const track = this.relationService.hasTrack(trackId);
+  async addTrackToFavorites(trackId: string) {
+    const track = await this.relationService.hasTrack(trackId);
     if (!track) {
       throw new UnprocessableEntityException(
         `Track with id ${trackId} is not found`,
@@ -50,7 +56,7 @@ export class FavInMemoryStorage implements IFavStore {
     this.favorites.tracks.push(trackId);
   }
 
-  removeTrackFromFavorites(trackId: string) {
+  async removeTrackFromFavorites(trackId: string) {
     const index = this.favorites.tracks.indexOf(trackId);
     if (index === -1)
       throw new NotFoundException(
@@ -59,8 +65,8 @@ export class FavInMemoryStorage implements IFavStore {
     this.favorites.tracks.splice(index, 1);
   }
 
-  addAlbumToFavorites(albumId: string) {
-    const album = this.relationService.hasAlbum(albumId);
+  async addAlbumToFavorites(albumId: string) {
+    const album = await this.relationService.hasAlbum(albumId);
     if (!album) {
       throw new UnprocessableEntityException(
         `Album with id ${albumId} is not found`,
@@ -69,7 +75,7 @@ export class FavInMemoryStorage implements IFavStore {
     this.favorites.albums.push(albumId);
   }
 
-  removeAlbumFromFavorites(albumId: string) {
+  async removeAlbumFromFavorites(albumId: string) {
     const index = this.favorites.albums.indexOf(albumId);
     if (index === -1)
       throw new NotFoundException(
@@ -78,8 +84,8 @@ export class FavInMemoryStorage implements IFavStore {
     this.favorites.albums.splice(index, 1);
   }
 
-  addArtistToFavorites(artistId: string) {
-    const artist = this.relationService.hasArtist(artistId);
+  async addArtistToFavorites(artistId: string) {
+    const artist = await this.relationService.hasArtist(artistId);
     if (!artist) {
       throw new UnprocessableEntityException(
         `Artist with id ${artistId} is not found`,
@@ -88,7 +94,7 @@ export class FavInMemoryStorage implements IFavStore {
     this.favorites.artists.push(artistId);
   }
 
-  removeArtistFromFavorites(artistId: string) {
+  async removeArtistFromFavorites(artistId: string) {
     const index = this.favorites.artists.indexOf(artistId);
     if (index === -1)
       throw new NotFoundException(

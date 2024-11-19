@@ -13,17 +13,17 @@ export class ArtistInMemoryStorage implements IArtistStore {
 
   constructor(private readonly relationService: RelationService) {}
 
-  getAllArtists() {
+  async getAllArtists() {
     return this.artists;
   }
 
-  getArtistById(id: string) {
+  async getArtistById(id: string) {
     const artist = this.artists.find((user) => user.id === id);
 
     return artist;
   }
 
-  createArtist(createArtistDto: CreateArtistDto) {
+  async createArtist(createArtistDto: CreateArtistDto) {
     const newArtist: Artist = {
       id: uuidv4(),
       name: createArtistDto.name,
@@ -34,7 +34,7 @@ export class ArtistInMemoryStorage implements IArtistStore {
     return newArtist;
   }
 
-  updateArtist(id: string, updateArtistDto: UpdateArtistDto) {
+  async updateArtist(id: string, updateArtistDto: UpdateArtistDto) {
     const artistIndex = this.artists.findIndex((artist) => artist.id === id);
     if (artistIndex === -1) {
       throw new NotFoundException(`Artist with id ${id} not found`);
@@ -47,13 +47,13 @@ export class ArtistInMemoryStorage implements IArtistStore {
     return updatedArtist;
   }
 
-  deleteArtist(id: string) {
+  async deleteArtist(id: string) {
     const artistIndex = this.artists.findIndex((artist) => artist.id === id);
     if (artistIndex === -1) {
       throw new NotFoundException(`Artist with id ${id} not found`);
     }
 
     this.artists.splice(artistIndex, 1);
-    this.relationService.removeArtistReferences(id);
+    await this.relationService.removeArtistReferences(id);
   }
 }

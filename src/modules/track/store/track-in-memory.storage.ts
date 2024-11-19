@@ -13,15 +13,15 @@ export class TrackInMemoryStorage implements ITrackStore {
 
   constructor(private readonly relationService: RelationService) {}
 
-  getAllTracks() {
+  async getAllTracks() {
     return this.tracks;
   }
 
-  getTrackById(id: string) {
+  async getTrackById(id: string) {
     return this.tracks.find((track) => track.id === id);
   }
 
-  createTrack(createTrackDto: CreateTrackDto) {
+  async createTrack(createTrackDto: CreateTrackDto) {
     const { name, duration, artistId, albumId } = createTrackDto;
 
     if (artistId) {
@@ -54,7 +54,7 @@ export class TrackInMemoryStorage implements ITrackStore {
     return newTrack;
   }
 
-  updateTrack(id: string, updateArtistDto: UpdateTrackDto) {
+  async updateTrack(id: string, updateArtistDto: UpdateTrackDto) {
     const trackIndex = this.tracks.findIndex((track) => track.id === id);
     if (trackIndex === -1) {
       throw new NotFoundException(`Track with id ${id} not found`);
@@ -67,7 +67,7 @@ export class TrackInMemoryStorage implements ITrackStore {
     return updatedArtist;
   }
 
-  deleteTrack(id: string) {
+  async deleteTrack(id: string) {
     const trackIndex = this.tracks.findIndex((track) => track.id === id);
     if (trackIndex === -1) {
       throw new NotFoundException(`Track with id ${id} not found`);
@@ -75,7 +75,7 @@ export class TrackInMemoryStorage implements ITrackStore {
     this.tracks.splice(trackIndex, 1);
   }
 
-  removeArtistReferences(artistId: string) {
+  async removeArtistReferences(artistId: string) {
     this.tracks.forEach((track) => {
       if (track.artistId === artistId) {
         track.artistId = null;
@@ -83,7 +83,7 @@ export class TrackInMemoryStorage implements ITrackStore {
     });
   }
 
-  removeAlbumReferences(albumId: string) {
+  async removeAlbumReferences(albumId: string) {
     this.tracks.forEach((track) => {
       if (track.albumId === albumId) {
         track.albumId = null;

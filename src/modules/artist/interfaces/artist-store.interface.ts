@@ -3,9 +3,12 @@ import { CreateArtistDto } from '../dto/create-artist.dto';
 import { UpdateArtistDto } from '../dto/update-artist.dto';
 
 export interface IArtistStore {
-  getAllArtists: () => void;
-  getArtistById: (id: string) => Artist | undefined;
-  createArtist: (createUserDto: CreateArtistDto) => Artist;
-  updateArtist: (id: string, updatePasswordDto: UpdateArtistDto) => Artist;
-  deleteArtist: (id: string) => void;
+  getAllArtists: () => Promise<Artist[]>;
+  getArtistById: (id: string) => Promise<Artist | undefined>;
+  createArtist: (createUserDto: CreateArtistDto) => Promise<Artist>;
+  updateArtist: (
+    id: string,
+    updatePasswordDto: UpdateArtistDto,
+  ) => Promise<Artist>;
+  deleteArtist: (id: string) => Promise<void>;
 }

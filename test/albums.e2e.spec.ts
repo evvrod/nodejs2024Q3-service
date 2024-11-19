@@ -165,8 +165,7 @@ describe('Album (e2e)', () => {
 
       expect(creationArtistResponse.statusCode).toBe(StatusCodes.CREATED);
       const { id: updateArtistId } = creationArtistResponse.body;
-
-      // // Preparation end
+      // Preparation end
 
       const updateResponse = await unauthorizedRequest
         .put(albumsRoutes.update(createdId))

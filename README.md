@@ -6,11 +6,12 @@ This application allows you to manage and interact with a digital library throug
 
 - Git - [Download & Install Git](https://git-scm.com/downloads).
 - Node.js - [Download & Install Node.js](https://nodejs.org/en/download/) and the npm package manager.
+- Docker - [Download & Install Docker](https://www.docker.com).
 
 ## Downloading
 
 ```
-git clone {repository URL}
+git clone git@github.com:evvrod/nodejs2024Q3-service.git
 ```
 
 ## Installing NPM modules
@@ -23,23 +24,31 @@ npm install
 
 The application uses environment variables to configure its behavior. Create a `.env` file in the root directory and set the following variables:
 
-- `PORT` (default: `4000`): Specifies the port the server will run on.
-- `DATABASE_URL`: The URL for connecting to the database.
-- `JWT_SECRET`: Secret key for JSON Web Token (JWT) authentication.
+- `SERVER_PORT` (default: `4000`): Specifies the port the server will run on.
+- `DB_URL`: The URL for connecting to the database.
 
 Example `.env` file:
 
 ```env
-PORT=4000
-DATABASE_URL=your_database_url
-JWT_SECRET=your_secret_key
+SERVER_PORT=4000
+DB_URL=your_database_url
 ```
 
 ## Running application
-
+Locally
 ```
 npm start
 ```
+
+With Docker
+To run the application with Docker, use the following command:
+
+```
+npm run docker:build
+npm run docker:start
+```
+
+Ensure that Docker is running on your system before executing the command.
 
 ## API Documentation
 

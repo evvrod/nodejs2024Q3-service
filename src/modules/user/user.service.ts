@@ -7,23 +7,23 @@ import { IUserStore } from './interfaces/user-store.interface';
 export class UserService {
   constructor(@Inject('IUserStore') private storage: IUserStore) {}
 
-  create(createUserDto: CreateUserDto) {
-    return this.storage.createUser(createUserDto);
+  async create(createUserDto: CreateUserDto) {
+    return await this.storage.createUser(createUserDto);
   }
 
-  findAll() {
-    return this.storage.getAllUsers();
+  async findAll() {
+    return await this.storage.getAllUsers();
   }
 
-  findOne(id: string) {
-    return this.storage.getUserById(id);
+  async findOne(id: string) {
+    return await this.storage.getUserById(id);
   }
 
-  update(id: string, updatePasswordDto: UpdatePasswordDto) {
-    return this.storage.updatePassword(id, updatePasswordDto);
+  async update(id: string, updatePasswordDto: UpdatePasswordDto) {
+    return await this.storage.updatePassword(id, updatePasswordDto);
   }
 
-  remove(id: string) {
-    return this.storage.deleteUser(id);
+  async remove(id: string) {
+    return await this.storage.deleteUser(id);
   }
 }

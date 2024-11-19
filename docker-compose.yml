@@ -1,0 +1,47 @@
+services:
+  db:
+    build:
+      context: ./db
+      dockerfile: ./docker/dockerfile
+    container_name: my_postgres
+    environment:
+      POSTGRES_USER: '${DB_USER}'
+      POSTGRES_PASSWORD: '${DB_PASSWORD}'
+      POSTGRES_DB: '${DB_NAME}'
+      DB_PORT: '${DB_PORT}'
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - postgres_logs:/var/lib/postgresql
+    ports:
+      - ${DB_PORT}:${DB_PORT}
+    restart: always
+    networks:
+      - mynetwork
+
+  server:
+    build:
+      context: ./
+      dockerfile: ./dockerfile
+    # image: evvrod/nodejs2024q3-service-server:latest
+    container_name: my_server
+    environment:
+      SERVER_PORT: '${SERVER_PORT}'
+      DB_URL: '${DB_URL}'
+      USE_IN_MEMORY_DB: '${USE_IN_MEMORY_DB}'
+    ports:
+      - ${SERVER_PORT}:${SERVER_PORT}
+    volumes:
+      - ./src:/app/src
+    depends_on:
+      - db
+    restart: on-failure
+    networks:
+      - mynetwork
+
+volumes:
+  postgres_data:
+  postgres_logs:
+
+networks:
+  mynetwork:
+    driver: bridge

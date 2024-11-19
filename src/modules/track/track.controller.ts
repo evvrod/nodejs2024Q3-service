@@ -37,8 +37,8 @@ export class TrackController {
     description: 'List of all tracks.',
     type: [Track],
   })
-  findAll() {
-    return this.trackService.findAll();
+  async findAll() {
+    return await this.trackService.findAll();
   }
 
   @Get(':id')
@@ -58,8 +58,8 @@ export class TrackController {
     status: HttpStatus.NOT_FOUND,
     description: 'Track with the specified ID not found.',
   })
-  findOne(@Param() params: TrackIdDto) {
-    const track = this.trackService.findOne(params.id);
+  async findOne(@Param() params: TrackIdDto) {
+    const track = await this.trackService.findOne(params.id);
 
     if (!track) {
       throw new NotFoundException(`Track with id ${params.id} not found`);
@@ -82,8 +82,8 @@ export class TrackController {
     status: HttpStatus.BAD_REQUEST,
     description: 'Invalid request body.',
   })
-  create(@Body() createTrackDto: CreateTrackDto) {
-    return this.trackService.create(createTrackDto);
+  async create(@Body() createTrackDto: CreateTrackDto) {
+    return await this.trackService.create(createTrackDto);
   }
 
   @Put(':id')
@@ -103,8 +103,11 @@ export class TrackController {
     status: HttpStatus.NOT_FOUND,
     description: 'Track with the specified ID not found.',
   })
-  update(@Param() params: TrackIdDto, @Body() updateTrackDto: UpdateTrackDto) {
-    return this.trackService.update(params.id, updateTrackDto);
+  async update(
+    @Param() params: TrackIdDto,
+    @Body() updateTrackDto: UpdateTrackDto,
+  ) {
+    return await this.trackService.update(params.id, updateTrackDto);
   }
 
   @Delete(':id')
@@ -124,7 +127,7 @@ export class TrackController {
     status: HttpStatus.NOT_FOUND,
     description: 'Track with the specified ID not found.',
   })
-  remove(@Param() params: TrackIdDto) {
-    return this.trackService.remove(params.id);
+  async remove(@Param() params: TrackIdDto) {
+    return await this.trackService.remove(params.id);
   }
 }

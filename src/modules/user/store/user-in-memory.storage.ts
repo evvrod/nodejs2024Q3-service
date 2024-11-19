@@ -14,11 +14,11 @@ import { v4 as uuidv4 } from 'uuid';
 export class UserInMemoryStorage implements IUserStore {
   private users: User[] = [];
 
-  getAllUsers() {
+  async getAllUsers() {
     return this.users.map((el) => this.getUserWithoutPassword(el));
   }
 
-  getUserById(id: string) {
+  async getUserById(id: string) {
     const user = this.users.find((user) => user.id === id);
 
     if (!user) {
@@ -28,7 +28,7 @@ export class UserInMemoryStorage implements IUserStore {
     return this.getUserWithoutPassword(user);
   }
 
-  createUser(createUserDto: CreateUserDto) {
+  async createUser(createUserDto: CreateUserDto) {
     const timestamp = Date.now();
     const newUser: User = {
       id: uuidv4(),
@@ -43,7 +43,7 @@ export class UserInMemoryStorage implements IUserStore {
     return this.getUserWithoutPassword(newUser);
   }
 
-  updatePassword(id: string, updatePasswordDto: UpdatePasswordDto) {
+  async updatePassword(id: string, updatePasswordDto: UpdatePasswordDto) {
     const user = this.getUserByIdWithPass(id);
 
     if (!user) {
@@ -57,10 +57,11 @@ export class UserInMemoryStorage implements IUserStore {
     user.password = updatePasswordDto.newPassword;
     user.version += 1;
     user.updatedAt = Date.now();
+
     return this.getUserWithoutPassword(user);
   }
 
-  deleteUser(id: string) {
+  async deleteUser(id: string) {
     const index = this.users.findIndex((user) => user.id === id);
 
     if (index === -1) {
@@ -68,7 +69,6 @@ export class UserInMemoryStorage implements IUserStore {
     }
 
     this.users.splice(index, 1);
-    return true;
   }
 
   private getUserWithoutPassword(user: User): ResponseUserDto {

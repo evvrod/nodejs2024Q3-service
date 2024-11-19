@@ -5,43 +5,43 @@ import { IFavStore } from './interfaces/fav-store.interface';
 export class FavService {
   constructor(@Inject('IFavStore') private storage: IFavStore) {}
 
-  findAll() {
-    return this.storage.getAllFavorites();
+  async findAll() {
+    return await this.storage.getAllFavorites();
   }
 
-  hasArtistInFavorites(artistId: string) {
-    return this.storage.hasArtistInFavorites(artistId);
+  async hasArtistInFavorites(artistId: string) {
+    return await this.storage.hasArtistInFavorites(artistId);
   }
 
-  hasAlbumInFavorites(albumId: string) {
-    return this.storage.hasAlbumInFavorites(albumId);
+  async hasAlbumInFavorites(albumId: string) {
+    return await this.storage.hasAlbumInFavorites(albumId);
   }
 
-  hasTrackInFavorites(trackId: string) {
-    return this.storage.hasTrackInFavorites(trackId);
+  async hasTrackInFavorites(trackId: string) {
+    return await this.storage.hasTrackInFavorites(trackId);
   }
 
-  addTrackToFavorites(id: string) {
-    return this.storage.addTrackToFavorites(id);
+  async addTrackToFavorites(id: string) {
+    return await this.storage.addTrackToFavorites(id);
   }
 
-  removeTrackFromFavorites(id: string) {
-    return this.storage.removeTrackFromFavorites(id);
+  async removeTrackFromFavorites(id: string) {
+    return await this.storage.removeTrackFromFavorites(id);
   }
 
-  addAlbumToFavorites(id: string) {
-    return this.storage.addAlbumToFavorites(id);
+  async addAlbumToFavorites(id: string) {
+    return await this.storage.addAlbumToFavorites(id);
   }
 
-  removeAlbumFromFavorites(id: string) {
-    return this.storage.removeAlbumFromFavorites(id);
+  async removeAlbumFromFavorites(id: string) {
+    return await this.storage.removeAlbumFromFavorites(id);
   }
 
-  addArtistToFavorites(id: string) {
-    return this.storage.addArtistToFavorites(id);
+  async addArtistToFavorites(id: string) {
+    return await this.storage.addArtistToFavorites(id);
   }
 
-  removeArtistFromFavorites(id: string) {
-    return this.storage.removeArtistFromFavorites(id);
+  async removeArtistFromFavorites(id: string) {
+    return await this.storage.removeArtistFromFavorites(id);
   }
 }

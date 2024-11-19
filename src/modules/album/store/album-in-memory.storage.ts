@@ -12,21 +12,21 @@ export class AlbumInMemoryStorage implements IAlbumStore {
 
   constructor(private readonly relationService: RelationService) {}
 
-  getAllAlbums() {
+  async getAllAlbums() {
     return this.albums;
   }
 
-  getAlbumById(id: string) {
+  async getAlbumById(id: string) {
     const album = this.albums.find((album) => album.id === id);
 
     return album;
   }
 
-  hasAlbum(id: string) {
+  async hasAlbum(id: string) {
     return this.albums.some((album) => album.id === id);
   }
 
-  createAlbum(createAlbumDto: CreateAlbumDto) {
+  async createAlbum(createAlbumDto: CreateAlbumDto) {
     const { name, year, artistId } = createAlbumDto;
 
     if (artistId) {
@@ -49,7 +49,7 @@ export class AlbumInMemoryStorage implements IAlbumStore {
     return newAlbum;
   }
 
-  updateAlbum(id: string, updateAlbumDto: UpdateAlbumDto) {
+  async updateAlbum(id: string, updateAlbumDto: UpdateAlbumDto) {
     const albumIndex = this.albums.findIndex((album) => album.id === id);
     if (albumIndex === -1) {
       throw new NotFoundException(`Album with id ${id} not found`);
@@ -63,16 +63,16 @@ export class AlbumInMemoryStorage implements IAlbumStore {
     return updatedAlbum;
   }
 
-  deleteAlbum(id: string) {
+  async deleteAlbum(id: string) {
     const albumIndex = this.albums.findIndex((album) => album.id === id);
     if (albumIndex === -1) {
       throw new NotFoundException(`Album with id ${id} not found`);
     }
     this.albums.splice(albumIndex, 1);
-    this.relationService.removeAlbumReferences(id);
+    await this.relationService.removeAlbumReferences(id);
   }
 
-  removeArtistReferences(artistId: string) {
+  async removeArtistReferences(artistId: string) {
     this.albums.forEach((album) => {
       if (album.artistId === artistId) {
         album.artistId = null;

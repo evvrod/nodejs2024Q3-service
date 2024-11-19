@@ -5,17 +5,24 @@ import { AppModule } from './app.module';
 import { SwaggerConfig } from './modules/swagger/swagger.module';
 
 async function bootstrap() {
-  const app = await NestFactory.create(AppModule);
+  const configService = await NestFactory.create(AppModule).then((app) =>
+    app.get(ConfigService),
+  );
+  const port = configService.get<number>('SERVER_PORT', 4000);
+  const useInMemoryDb =
+    configService.get<string>('USE_IN_MEMORY_DB') === 'true';
+
+  const appModule = await AppModule.register(useInMemoryDb);
+
+  const app = await NestFactory.create(appModule);
 
   SwaggerConfig.setup(app);
 
-  const configService = app.get(ConfigService);
-  const port = configService.get<number>('PORT', 4000);
-
-  await app.listen(4000);
+  await app.listen(port);
   console.log(`Application is running on: http://localhost:${port}`);
   console.log(
     `API Documentation is available on: http://localhost:${port}/api-docs`,
   );
+  console.log(`${useInMemoryDb ? 'In-memory' : 'PostgreSQL'} database is used`);
 }
 bootstrap();

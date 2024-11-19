@@ -26,8 +26,8 @@ export class FavController {
     description: 'List of all favorite items',
     type: GetAllFavoritesResponseDto,
   })
-  findAll() {
-    return this.favService.findAll();
+  async findAll() {
+    return await this.favService.findAll();
   }
 
   @Post('track/:id')
@@ -47,9 +47,9 @@ export class FavController {
     status: HttpStatus.UNPROCESSABLE_ENTITY,
     description: 'Track with the specified ID does not exist.',
   })
-  addTrackToFavorites(@Param() params: IdParamDto) {
+  async addTrackToFavorites(@Param() params: IdParamDto) {
     const { id } = params;
-    this.favService.addTrackToFavorites(id);
+    await this.favService.addTrackToFavorites(id);
     return { message: `Track with id ${id} added to favorites` };
   }
 
@@ -70,9 +70,9 @@ export class FavController {
     status: HttpStatus.NOT_FOUND,
     description: 'Track with the specified ID not found in favorites.',
   })
-  removeTrackFromFavorites(@Param() params: IdParamDto) {
+  async removeTrackFromFavorites(@Param() params: IdParamDto) {
     const { id } = params;
-    this.favService.removeTrackFromFavorites(id);
+    await this.favService.removeTrackFromFavorites(id);
   }
 
   @Post('album/:id')
@@ -92,9 +92,9 @@ export class FavController {
     status: HttpStatus.UNPROCESSABLE_ENTITY,
     description: 'Album with the specified ID does not exist.',
   })
-  addAlbumToFavorites(@Param() params: IdParamDto) {
+  async addAlbumToFavorites(@Param() params: IdParamDto) {
     const { id } = params;
-    this.favService.addAlbumToFavorites(id);
+    await this.favService.addAlbumToFavorites(id);
     return { message: `Album with id ${id} added to favorites` };
   }
 
@@ -115,9 +115,9 @@ export class FavController {
     status: HttpStatus.NOT_FOUND,
     description: 'Album with the specified ID not found in favorites.',
   })
-  removeAlbumFromFavorites(@Param() params: IdParamDto) {
+  async removeAlbumFromFavorites(@Param() params: IdParamDto) {
     const { id } = params;
-    this.favService.removeAlbumFromFavorites(id);
+    await this.favService.removeAlbumFromFavorites(id);
   }
 
   @Post('artist/:id')
@@ -137,9 +137,9 @@ export class FavController {
     status: HttpStatus.UNPROCESSABLE_ENTITY,
     description: 'Artist with the specified ID does not exist.',
   })
-  addArtistToFavorites(@Param() params: IdParamDto) {
+  async addArtistToFavorites(@Param() params: IdParamDto) {
     const { id } = params;
-    this.favService.addArtistToFavorites(id);
+    await this.favService.addArtistToFavorites(id);
     return { message: `Artist with id ${id} added to favorites` };
   }
 
@@ -160,8 +160,8 @@ export class FavController {
     status: HttpStatus.NOT_FOUND,
     description: 'Artist with the specified ID not found in favorites.',
   })
-  removeArtistFromFavorites(@Param() params: IdParamDto) {
+  async removeArtistFromFavorites(@Param() params: IdParamDto) {
     const { id } = params;
-    this.favService.removeArtistFromFavorites(id);
+    await this.favService.removeArtistFromFavorites(id);
   }
 }

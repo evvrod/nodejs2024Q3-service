@@ -7,27 +7,27 @@ import { IAlbumStore } from './interfaces/album-store.interface';
 export class AlbumService {
   constructor(@Inject('IAlbumStore') private storage: IAlbumStore) {}
 
-  create(createAlbumDto: CreateAlbumDto) {
-    return this.storage.createAlbum(createAlbumDto);
+  async create(createAlbumDto: CreateAlbumDto) {
+    return await this.storage.createAlbum(createAlbumDto);
   }
 
-  findAll() {
-    return this.storage.getAllAlbums();
+  async findAll() {
+    return await this.storage.getAllAlbums();
   }
 
-  findOne(id: string) {
-    return this.storage.getAlbumById(id);
+  async findOne(id: string) {
+    return await this.storage.getAlbumById(id);
   }
 
-  update(id: string, updateAlbumDto: UpdateAlbumDto) {
-    return this.storage.updateAlbum(id, updateAlbumDto);
+  async update(id: string, updateAlbumDto: UpdateAlbumDto) {
+    return await this.storage.updateAlbum(id, updateAlbumDto);
   }
 
-  remove(id: string) {
-    this.storage.deleteAlbum(id);
+  async remove(id: string) {
+    await this.storage.deleteAlbum(id);
   }
 
-  removeArtistReferences(artistId: string) {
-    this.storage.removeArtistReferences(artistId);
+  async removeArtistReferences(artistId: string) {
+    await this.storage.removeArtistReferences(artistId);
   }
 }

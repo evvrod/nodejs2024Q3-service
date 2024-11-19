@@ -5,10 +5,12 @@ import { Module, forwardRef } from '@nestjs/common';
 import { FavService } from './fav.service';
 import { FavController } from './fav.controller';
 import { FavInMemoryStorage } from './store/fav-in-memory.storage';
+import { FavInPostgresStorage } from './store/fav-in-postgres.storage';
 import { RelationModule } from '../relation/relation.module';
+import { PrismaModule } from '../prisma/prisma.module';
 
 @Module({
-  imports: [forwardRef(() => RelationModule)],
+  imports: [forwardRef(() => RelationModule), PrismaModule],
   controllers: [FavController],
   providers: [
     {
@@ -16,7 +18,7 @@ import { RelationModule } from '../relation/relation.module';
       useClass:
         process.env.USE_IN_MEMORY_DB === 'true'
           ? FavInMemoryStorage
-          : FavInMemoryStorage,
+          : FavInPostgresStorage,
     },
     FavService,
   ],
