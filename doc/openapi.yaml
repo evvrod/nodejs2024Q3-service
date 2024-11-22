@@ -9,7 +9,7 @@ servers:
     description: Local development server
 components:
   schemas:
-    ResponseUserDto:
+    UserDto:
       type: object
       properties:
         id:
@@ -65,6 +65,43 @@ components:
       required:
         - oldPassword
         - newPassword
+    SignupDto:
+      type: object
+      properties:
+        login:
+          type: string
+          description: Login of the user
+          example: TestUser
+        password:
+          type: string
+          description: Password for the user
+          example: TestPassword
+      required:
+        - login
+        - password
+    LoginDto:
+      type: object
+      properties:
+        login:
+          type: string
+          description: Login of the user
+          example: TestUser
+        password:
+          type: string
+          description: Password for the user
+          example: TestPassword
+      required:
+        - login
+        - password
+    RefreshDto:
+      type: object
+      properties:
+        refreshToken:
+          type: string
+          example: eyJhbGciOiJIUzI1NiIs...
+          description: Refresh token
+      required:
+        - refreshToken
     Artist:
       type: object
       properties:
@@ -308,7 +345,7 @@ paths:
               schema:
                 type: array
                 items:
-                  $ref: '#/components/schemas/ResponseUserDto'
+                  $ref: '#/components/schemas/UserDto'
       summary: Get all users
       tags: &ref_0
         - Users
@@ -327,14 +364,14 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ResponseUserDto'
+                $ref: '#/components/schemas/UserDto'
         '400':
           description: Bad request. Login and Password are required
       summary: Create a new user
       tags: *ref_0
   /user/{id}:
     get:
-      operationId: UserController_findOne
+      operationId: UserController_findById
       parameters:
         - name: id
           required: true
@@ -350,7 +387,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ResponseUserDto'
+                $ref: '#/components/schemas/UserDto'
         '400':
           description: Bad request. userId is invalid (not uuid)
         '404':
@@ -380,7 +417,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ResponseUserDto'
+                $ref: '#/components/schemas/UserDto'
         '400':
           description: Bad request. userId is invalid (not uuid)
         '403':
@@ -409,6 +446,49 @@ paths:
           description: User not found
       summary: Delete user by ID
       tags: *ref_0
+  /auth/signup:
+    post:
+      operationId: AuthController_signup
+      parameters: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SignupDto'
+      responses:
+        '201':
+          description: ''
+      tags: &ref_1
+        - Auth
+  /auth/login:
+    post:
+      operationId: AuthController_login
+      parameters: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/LoginDto'
+      responses:
+        '201':
+          description: ''
+      tags: *ref_1
+  /auth/refresh:
+    post:
+      operationId: AuthController_refresh
+      parameters: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RefreshDto'
+      responses:
+        '200':
+          description: ''
+      tags: *ref_1
   /artist:
     get:
       operationId: ArtistController_findAll
@@ -423,7 +503,7 @@ paths:
                 items:
                   $ref: '#/components/schemas/Artist'
       summary: Get all artists
-      tags: &ref_1
+      tags: &ref_2
         - Artists
     post:
       operationId: ArtistController_create
@@ -444,7 +524,7 @@ paths:
         '400':
           description: Bad request. Missing required fields.
       summary: Create a new artist
-      tags: *ref_1
+      tags: *ref_2
   /artist/{id}:
     get:
       operationId: ArtistController_findOne
@@ -469,7 +549,7 @@ paths:
         '404':
           description: Artist with the given id not found.
       summary: Get artist by id
-      tags: *ref_1
+      tags: *ref_2
     put:
       operationId: ArtistController_update
       parameters:
@@ -499,7 +579,7 @@ paths:
         '404':
           description: Artist with the given id not found.
       summary: Update artist information
-      tags: *ref_1
+      tags: *ref_2
     delete:
       operationId: ArtistController_remove
       parameters:
@@ -519,7 +599,7 @@ paths:
         '404':
           description: Artist with the given id not found.
       summary: Delete an artist by id
-      tags: *ref_1
+      tags: *ref_2
   /album:
     get:
       operationId: AlbumController_findAll
@@ -534,7 +614,7 @@ paths:
                 items:
                   $ref: '#/components/schemas/Album'
       summary: Get all albums
-      tags: &ref_2
+      tags: &ref_3
         - Albums
     post:
       operationId: AlbumController_create
@@ -555,7 +635,7 @@ paths:
         '400':
           description: Bad request. The body is missing required fields.
       summary: Create a new album
-      tags: *ref_2
+      tags: *ref_3
   /album/{id}:
     get:
       operationId: AlbumController_findOne
@@ -580,7 +660,7 @@ paths:
         '404':
           description: Album with the given id not found.
       summary: Get an album by id
-      tags: *ref_2
+      tags: *ref_3
     put:
       operationId: AlbumController_update
       parameters:
@@ -610,7 +690,7 @@ paths:
         '404':
           description: Album with the given id not found.
       summary: Update album information
-      tags: *ref_2
+      tags: *ref_3
     delete:
       operationId: AlbumController_remove
       parameters:
@@ -630,7 +710,7 @@ paths:
         '404':
           description: Album with the given id not found.
       summary: Delete an album by id
-      tags: *ref_2
+      tags: *ref_3
   /track:
     get:
       operationId: TrackController_findAll
@@ -645,7 +725,7 @@ paths:
                 items:
                   $ref: '#/components/schemas/Track'
       summary: Get all tracks
-      tags: &ref_3
+      tags: &ref_4
         - Tracks
     post:
       operationId: TrackController_create
@@ -666,7 +746,7 @@ paths:
         '400':
           description: Invalid request body.
       summary: Create a new track
-      tags: *ref_3
+      tags: *ref_4
   /track/{id}:
     get:
       operationId: TrackController_findOne
@@ -691,7 +771,7 @@ paths:
         '404':
           description: Track with the specified ID not found.
       summary: Get a track by ID
-      tags: *ref_3
+      tags: *ref_4
     put:
       operationId: TrackController_update
       parameters:
@@ -717,7 +797,7 @@ paths:
         '404':
           description: Track with the specified ID not found.
       summary: Update track information
-      tags: *ref_3
+      tags: *ref_4
     delete:
       operationId: TrackController_remove
       parameters:
@@ -737,7 +817,7 @@ paths:
         '404':
           description: Track with the specified ID not found.
       summary: Delete a track
-      tags: *ref_3
+      tags: *ref_4
   /favs:
     get:
       operationId: FavController_findAll
@@ -750,7 +830,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/GetAllFavoritesResponseDto'
       summary: Retrieve all favorites
-      tags: &ref_4
+      tags: &ref_5
         - Favorites
   /favs/track/{id}:
     post:
@@ -770,7 +850,7 @@ paths:
         '422':
           description: Track with the specified ID does not exist.
       summary: Add a track to favorites
-      tags: *ref_4
+      tags: *ref_5
     delete:
       operationId: FavController_removeTrackFromFavorites
       parameters:
@@ -788,7 +868,7 @@ paths:
         '404':
           description: Track with the specified ID not found in favorites.
       summary: Remove a track from favorites
-      tags: *ref_4
+      tags: *ref_5
   /favs/album/{id}:
     post:
       operationId: FavController_addAlbumToFavorites
@@ -807,7 +887,7 @@ paths:
         '422':
           description: Album with the specified ID does not exist.
       summary: Add an album to favorites
-      tags: *ref_4
+      tags: *ref_5
     delete:
       operationId: FavController_removeAlbumFromFavorites
       parameters:
@@ -825,7 +905,7 @@ paths:
         '404':
           description: Album with the specified ID not found in favorites.
       summary: Remove an album from favorites
-      tags: *ref_4
+      tags: *ref_5
   /favs/artist/{id}:
     post:
       operationId: FavController_addArtistToFavorites
@@ -844,7 +924,7 @@ paths:
         '422':
           description: Artist with the specified ID does not exist.
       summary: Add an artist to favorites
-      tags: *ref_4
+      tags: *ref_5
     delete:
       operationId: FavController_removeArtistFromFavorites
       parameters:
@@ -862,4 +942,4 @@ paths:
         '404':
           description: Artist with the specified ID not found in favorites.
       summary: Remove an artist from favorites
-      tags: *ref_4
+      tags: *ref_5

@@ -1,11 +1,10 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
-
-import { RelationService } from 'src/modules/relation/relation.service';
 import { ITrackStore } from '../interfaces/track-store.interface';
 import { CreateTrackDto } from 'src/modules/track/dto/create-track.dto';
 import { UpdateTrackDto } from 'src/modules/track/dto/update-track.dto';
 import { Track } from 'src/modules/track/entities/track.entity';
 import { v4 as uuidv4 } from 'uuid';
+import { RelationService } from 'src/modules/relation/relation.service';
 
 @Injectable()
 export class TrackInMemoryStorage implements ITrackStore {

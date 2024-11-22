@@ -1,5 +1,4 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
-import { RelationService } from 'src/modules/relation/relation.service';
 
 import { IArtistStore } from '../interfaces/artist-store.interface';
 import { CreateArtistDto } from 'src/modules/artist/dto/create-artist.dto';
@@ -11,7 +10,7 @@ import { v4 as uuidv4 } from 'uuid';
 export class ArtistInMemoryStorage implements IArtistStore {
   private artists: Artist[] = [];
 
-  constructor(private readonly relationService: RelationService) {}
+  constructor() {}
 
   async getAllArtists() {
     return this.artists;
@@ -54,6 +53,5 @@ export class ArtistInMemoryStorage implements IArtistStore {
     }
 
     this.artists.splice(artistIndex, 1);
-    await this.relationService.removeArtistReferences(id);
   }
 }

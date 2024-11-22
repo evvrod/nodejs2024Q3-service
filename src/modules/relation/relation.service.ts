@@ -14,27 +14,6 @@ export class RelationService {
     @Inject(forwardRef(() => FavService)) private favService: FavService,
   ) {}
 
-  async removeArtistReferences(artistId: string) {
-    await this.albumService.removeArtistReferences(artistId);
-    await this.trackService.removeArtistReferences(artistId);
-    if (await this.favService.hasArtistInFavorites(artistId)) {
-      await this.favService.removeArtistFromFavorites(artistId);
-    }
-  }
-
-  async removeAlbumReferences(albumId: string) {
-    await this.trackService.removeAlbumReferences(albumId);
-    if (await this.favService.hasAlbumInFavorites(albumId)) {
-      await this.favService.removeAlbumFromFavorites(albumId);
-    }
-  }
-
-  async removeTrackReferences(trackId: string) {
-    if (await this.favService.hasTrackInFavorites(trackId)) {
-      await this.favService.removeTrackFromFavorites(trackId);
-    }
-  }
-
   async hasArtist(artistId: string) {
     const artist = await this.artistService.findOne(artistId);
     return !!artist;
@@ -62,7 +41,7 @@ export class RelationService {
     return await this.trackService.findOne(trackId);
   }
 
-  async handleTrackDeletion(trackId: string) {
-    await this.favService.removeTrackFromFavorites(trackId);
+  async handleTrackDeletion(id: string, trackId: string) {
+    await this.favService.removeTrackFromFavorites(id, trackId);
   }
 }

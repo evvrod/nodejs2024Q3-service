@@ -1,9 +1,10 @@
 import { Module, forwardRef } from '@nestjs/common';
+import { RelationModule } from '../relation/relation.module';
+
 import { TrackService } from './track.service';
 import { TrackController } from './track.controller';
 import { TrackInMemoryStorage } from './store/track-in-memory.storage';
 import { TrackInPostgresStorage } from './store/track-in-postgres.storage';
-import { RelationModule } from '../relation/relation.module';
 import { PrismaModule } from '../prisma/prisma.module';
 
 @Module({

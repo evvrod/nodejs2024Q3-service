@@ -21,7 +21,7 @@ import {
 import { UserService } from './user.service';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdatePasswordDto } from './dto/update-password.dto';
-import { ResponseUserDto } from './dto/user-response.dto';
+import { UserDto } from './dto/user.dto';
 import { UserIdDto } from './dto/user-id.dto';
 
 @ApiTags('Users')
@@ -34,7 +34,7 @@ export class UserController {
   @ApiResponse({
     status: HttpStatus.OK,
     description: 'Successfully fetched all users.',
-    type: [ResponseUserDto],
+    type: [UserDto],
   })
   async findAll() {
     return await this.userService.findAll();
@@ -51,7 +51,7 @@ export class UserController {
   @ApiResponse({
     status: HttpStatus.OK,
     description: 'User found.',
-    type: ResponseUserDto,
+    type: UserDto,
   })
   @ApiResponse({
     status: HttpStatus.BAD_REQUEST,
@@ -62,8 +62,8 @@ export class UserController {
     description: 'User not found',
   })
   @UsePipes(new ValidationPipe())
-  async findOne(@Param() params: UserIdDto) {
-    return await this.userService.findOne(params.id);
+  async findById(@Param() params: UserIdDto) {
+    return await this.userService.findById(params.id);
   }
 
   @Post()
@@ -73,7 +73,7 @@ export class UserController {
   @ApiResponse({
     status: HttpStatus.CREATED,
     description: 'User created successfully.',
-    type: ResponseUserDto,
+    type: UserDto,
   })
   @ApiResponse({
     status: HttpStatus.BAD_REQUEST,
@@ -95,7 +95,7 @@ export class UserController {
   @ApiResponse({
     status: HttpStatus.OK,
     description: 'Password updated successfully.',
-    type: ResponseUserDto,
+    type: UserDto,
   })
   @ApiResponse({
     status: HttpStatus.BAD_REQUEST,

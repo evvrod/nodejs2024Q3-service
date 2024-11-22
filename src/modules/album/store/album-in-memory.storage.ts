@@ -1,16 +1,17 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
-import { RelationService } from 'src/modules/relation/relation.service';
 import { IAlbumStore } from '../interfaces/album-store.interface';
 import { CreateAlbumDto } from 'src/modules/album/dto/create-album.dto';
 import { UpdateAlbumDto } from 'src/modules/album/dto/update-album.dto';
 import { Album } from 'src/modules/album/entities/album.entity';
+import { RelationService } from 'src/modules/relation/relation.service';
+
 import { v4 as uuidv4 } from 'uuid';
 
 @Injectable()
 export class AlbumInMemoryStorage implements IAlbumStore {
   private albums: Album[] = [];
 
-  constructor(private readonly relationService: RelationService) {}
+  constructor(private relationService: RelationService) {}
 
   async getAllAlbums() {
     return this.albums;
@@ -69,10 +70,9 @@ export class AlbumInMemoryStorage implements IAlbumStore {
       throw new NotFoundException(`Album with id ${id} not found`);
     }
     this.albums.splice(albumIndex, 1);
-    await this.relationService.removeAlbumReferences(id);
   }
 
-  async removeArtistReferences(artistId: string) {
+  async removeArtistReferences(id: string, artistId: string) {
     this.albums.forEach((album) => {
       if (album.artistId === artistId) {
         album.artistId = null;

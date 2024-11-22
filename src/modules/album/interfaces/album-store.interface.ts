@@ -9,5 +9,5 @@ export interface IAlbumStore {
   updateAlbum: (id: string, updateAlbumDto: UpdateAlbumDto) => Promise<Album>;
   deleteAlbum: (id: string) => Promise<void>;
   hasAlbum: (id: string) => Promise<boolean>;
-  removeArtistReferences: (artistId: string) => Promise<void>;
+  removeArtistReferences: (id: string, artistId: string) => Promise<void>;
 }

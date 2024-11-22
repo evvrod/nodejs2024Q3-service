@@ -3,6 +3,7 @@ import {
   Get,
   Post,
   Param,
+  Req,
   Delete,
   HttpCode,
   HttpStatus,
@@ -13,6 +14,7 @@ import { ApiTags, ApiOperation, ApiParam, ApiResponse } from '@nestjs/swagger';
 import { FavService } from './fav.service';
 import { IdParamDto } from './dto/id-param.dto';
 import { GetAllFavoritesResponseDto } from './dto/get-all-favorites-response.dto';
+import { AuthenticatedRequest } from '../auth/auth.guard';
 
 @ApiTags('Favorites')
 @Controller('favs')
@@ -26,8 +28,9 @@ export class FavController {
     description: 'List of all favorite items',
     type: GetAllFavoritesResponseDto,
   })
-  async findAll() {
-    return await this.favService.findAll();
+  async findAll(@Req() req: AuthenticatedRequest) {
+    const { userId } = req.info;
+    return await this.favService.findAll(userId);
   }
 
   @Post('track/:id')
@@ -47,9 +50,14 @@ export class FavController {
     status: HttpStatus.UNPROCESSABLE_ENTITY,
     description: 'Track with the specified ID does not exist.',
   })
-  async addTrackToFavorites(@Param() params: IdParamDto) {
+  async addTrackToFavorites(
+    @Req() req: AuthenticatedRequest,
+    @Param() params: IdParamDto,
+  ) {
     const { id } = params;
-    await this.favService.addTrackToFavorites(id);
+    const { userId } = req.info;
+
+    await this.favService.addTrackToFavorites(userId, id);
     return { message: `Track with id ${id} added to favorites` };
   }
 
@@ -70,9 +78,14 @@ export class FavController {
     status: HttpStatus.NOT_FOUND,
     description: 'Track with the specified ID not found in favorites.',
   })
-  async removeTrackFromFavorites(@Param() params: IdParamDto) {
+  async removeTrackFromFavorites(
+    @Req() req: AuthenticatedRequest,
+    @Param() params: IdParamDto,
+  ) {
     const { id } = params;
-    await this.favService.removeTrackFromFavorites(id);
+    const { userId } = req.info;
+
+    await this.favService.removeTrackFromFavorites(userId, id);
   }
 
   @Post('album/:id')
@@ -92,9 +105,14 @@ export class FavController {
     status: HttpStatus.UNPROCESSABLE_ENTITY,
     description: 'Album with the specified ID does not exist.',
   })
-  async addAlbumToFavorites(@Param() params: IdParamDto) {
+  async addAlbumToFavorites(
+    @Req() req: AuthenticatedRequest,
+    @Param() params: IdParamDto,
+  ) {
     const { id } = params;
-    await this.favService.addAlbumToFavorites(id);
+    const { userId } = req.info;
+
+    await this.favService.addAlbumToFavorites(userId, id);
     return { message: `Album with id ${id} added to favorites` };
   }
 
@@ -115,9 +133,14 @@ export class FavController {
     status: HttpStatus.NOT_FOUND,
     description: 'Album with the specified ID not found in favorites.',
   })
-  async removeAlbumFromFavorites(@Param() params: IdParamDto) {
+  async removeAlbumFromFavorites(
+    @Req() req: AuthenticatedRequest,
+    @Param() params: IdParamDto,
+  ) {
     const { id } = params;
-    await this.favService.removeAlbumFromFavorites(id);
+    const { userId } = req.info;
+
+    await this.favService.removeAlbumFromFavorites(userId, id);
   }
 
   @Post('artist/:id')
@@ -137,9 +160,14 @@ export class FavController {
     status: HttpStatus.UNPROCESSABLE_ENTITY,
     description: 'Artist with the specified ID does not exist.',
   })
-  async addArtistToFavorites(@Param() params: IdParamDto) {
+  async addArtistToFavorites(
+    @Req() req: AuthenticatedRequest,
+    @Param() params: IdParamDto,
+  ) {
     const { id } = params;
-    await this.favService.addArtistToFavorites(id);
+    const { userId } = req.info;
+
+    await this.favService.addArtistToFavorites(userId, id);
     return { message: `Artist with id ${id} added to favorites` };
   }
 
@@ -160,8 +188,13 @@ export class FavController {
     status: HttpStatus.NOT_FOUND,
     description: 'Artist with the specified ID not found in favorites.',
   })
-  async removeArtistFromFavorites(@Param() params: IdParamDto) {
+  async removeArtistFromFavorites(
+    @Req() req: AuthenticatedRequest,
+    @Param() params: IdParamDto,
+  ) {
     const { id } = params;
-    await this.favService.removeArtistFromFavorites(id);
+    const { userId } = req.info;
+
+    await this.favService.removeArtistFromFavorites(userId, id);
   }
 }

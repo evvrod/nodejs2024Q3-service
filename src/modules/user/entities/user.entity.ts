@@ -7,6 +7,7 @@ export class User {
   id: string;
 
   @IsString()
+  @IsNotEmpty()
   login: string;
 
   @IsString()

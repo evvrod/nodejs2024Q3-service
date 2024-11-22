@@ -3,9 +3,15 @@ import { CreateAlbumDto } from './dto/create-album.dto';
 import { UpdateAlbumDto } from './dto/update-album.dto';
 import { IAlbumStore } from './interfaces/album-store.interface';
 
+import { EventEmitter2 } from '@nestjs/event-emitter';
+import { OnEvent } from '@nestjs/event-emitter';
+
 @Injectable()
 export class AlbumService {
-  constructor(@Inject('IAlbumStore') private storage: IAlbumStore) {}
+  constructor(
+    @Inject('IAlbumStore') private storage: IAlbumStore,
+    private readonly eventEmitter: EventEmitter2,
+  ) {}
 
   async create(createAlbumDto: CreateAlbumDto) {
     return await this.storage.createAlbum(createAlbumDto);
@@ -24,10 +30,12 @@ export class AlbumService {
   }
 
   async remove(id: string) {
+    this.eventEmitter.emit('album.deleted', id);
     await this.storage.deleteAlbum(id);
   }
 
-  async removeArtistReferences(artistId: string) {
-    await this.storage.removeArtistReferences(artistId);
+  @OnEvent('artist.deleted')
+  async handleArtistDeleted(id: string, artistId: string) {
+    await this.storage.removeArtistReferences(id, artistId);
   }
 }

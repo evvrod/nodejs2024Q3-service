@@ -4,10 +4,14 @@ import { IAlbumStore } from '../interfaces/album-store.interface';
 import { CreateAlbumDto } from 'src/modules/album/dto/create-album.dto';
 import { UpdateAlbumDto } from 'src/modules/album/dto/update-album.dto';
 import { Album } from 'src/modules/album/entities/album.entity';
+import { RelationService } from 'src/modules/relation/relation.service';
 
 @Injectable()
 export class AlbumInPostgresStorage implements IAlbumStore {
-  constructor(private readonly prisma: PrismaService) {}
+  constructor(
+    private readonly prisma: PrismaService,
+    private relationService: RelationService,
+  ) {}
 
   async getAllAlbums() {
     return await this.prisma.album.findMany();
@@ -23,9 +27,7 @@ export class AlbumInPostgresStorage implements IAlbumStore {
     const { name, year, artistId } = createAlbumDto;
 
     if (artistId) {
-      const artistExists = await this.prisma.artist.findUnique({
-        where: { id: artistId },
-      });
+      const artistExists = this.relationService.hasArtist(artistId);
       if (!artistExists) {
         throw new NotFoundException(
           `Artist with id ${artistId} does not exist.`,
@@ -80,7 +82,7 @@ export class AlbumInPostgresStorage implements IAlbumStore {
     return !!album;
   }
 
-  async removeArtistReferences(artistId: string): Promise<void> {
+  async removeArtistReferences(id: string, artistId: string): Promise<void> {
     await this.prisma.album.updateMany({
       where: { artistId },
       data: { artistId: null },

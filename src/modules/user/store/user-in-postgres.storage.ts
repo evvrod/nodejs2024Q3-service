@@ -7,9 +7,7 @@ import { IUserStore } from '../interfaces/user-store.interface';
 import { PrismaService } from 'src/modules/prisma/prisma.service';
 
 import { CreateUserDto } from 'src/modules/user/dto/create-user.dto';
-import { ResponseUserDto } from 'src/modules/user/dto/user-response.dto';
 import { UpdatePasswordDto } from 'src/modules/user/dto/update-password.dto';
-import { User } from 'src/modules/user/entities/user.entity';
 
 @Injectable()
 export class UserInPostgresStorage implements IUserStore {
@@ -20,6 +18,7 @@ export class UserInPostgresStorage implements IUserStore {
     return users.map((user) => ({
       id: user.id,
       login: user.login,
+      password: user.password,
       version: user.version,
       createdAt: Number(user.createdAt),
       updatedAt: Number(user.updatedAt),
@@ -35,11 +34,27 @@ export class UserInPostgresStorage implements IUserStore {
       throw new NotFoundException('User not found');
     }
 
-    return this.getUserWithoutPassword({
+    return {
       ...user,
       createdAt: Number(user.createdAt),
       updatedAt: Number(user.updatedAt),
+    };
+  }
+
+  async getUserByLogin(login: string) {
+    const user = await this.prisma.user.findUnique({
+      where: { login },
     });
+
+    if (!user) {
+      return null;
+    }
+
+    return {
+      ...user,
+      createdAt: Number(user.createdAt),
+      updatedAt: Number(user.updatedAt),
+    };
   }
 
   async createUser(createUserDto: CreateUserDto) {
@@ -56,11 +71,11 @@ export class UserInPostgresStorage implements IUserStore {
       },
     });
 
-    return this.getUserWithoutPassword({
+    return {
       ...newUser,
       createdAt: Number(newUser.createdAt),
       updatedAt: Number(newUser.updatedAt),
-    });
+    };
   }
 
   async updatePassword(id: string, updatePasswordDto: UpdatePasswordDto) {
@@ -86,11 +101,11 @@ export class UserInPostgresStorage implements IUserStore {
       },
     });
 
-    return this.getUserWithoutPassword({
+    return {
       ...updatedUser,
       createdAt: Number(updatedUser.createdAt),
       updatedAt: Number(updatedUser.updatedAt),
-    });
+    };
   }
 
   async deleteUser(id: string) {
@@ -105,11 +120,5 @@ export class UserInPostgresStorage implements IUserStore {
     await this.prisma.user.delete({
       where: { id },
     });
-  }
-
-  private getUserWithoutPassword(user: User): ResponseUserDto {
-    const userWithoutPassword = { ...user };
-    delete userWithoutPassword.password;
-    return userWithoutPassword;
   }
 }

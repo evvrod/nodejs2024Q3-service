@@ -37,6 +37,9 @@ async function bootstrap() {
   // Регистрация кастомного фильтра ошибок для глобального перехвата
   app.useGlobalFilters(new AllExceptionsFilter(loggingService));
 
+  app.enableCors({
+    allowedHeaders: 'Authorization, Content-Type',
+  });
   await app.listen(port);
   loggingService.debug(`Application is running on: http://localhost:${port}`);
   loggingService.debug(
