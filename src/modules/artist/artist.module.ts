@@ -1,5 +1,6 @@
 import { Module, forwardRef } from '@nestjs/common';
 import { RelationModule } from 'src/modules/relation/relation.module';
+
 import { ArtistService } from './artist.service';
 import { ArtistController } from './artist.controller';
 import { ArtistInMemoryStorage } from './store/artist-in-memory.storage';

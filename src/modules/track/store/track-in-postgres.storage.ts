@@ -4,10 +4,14 @@ import { PrismaService } from 'src/modules/prisma/prisma.service'; // Подкл
 import { ITrackStore } from '../interfaces/track-store.interface';
 import { CreateTrackDto } from 'src/modules/track/dto/create-track.dto';
 import { UpdateTrackDto } from 'src/modules/track/dto/update-track.dto';
+import { RelationService } from 'src/modules/relation/relation.service';
 
 @Injectable()
 export class TrackInPostgresStorage implements ITrackStore {
-  constructor(private readonly prisma: PrismaService) {}
+  constructor(
+    private readonly prisma: PrismaService,
+    private readonly relationService: RelationService,
+  ) {}
 
   async getAllTracks() {
     return await this.prisma.track.findMany();
@@ -29,9 +33,7 @@ export class TrackInPostgresStorage implements ITrackStore {
     const { name, duration, artistId, albumId } = createTrackDto;
 
     if (artistId) {
-      const artistExists = await this.prisma.artist.findUnique({
-        where: { id: artistId },
-      });
+      const artistExists = this.relationService.hasArtist(artistId);
       if (!artistExists) {
         throw new NotFoundException(
           `Artist with id ${artistId} does not exist.`,
@@ -40,11 +42,11 @@ export class TrackInPostgresStorage implements ITrackStore {
     }
 
     if (albumId) {
-      const albumExists = await this.prisma.album.findUnique({
-        where: { id: albumId },
-      });
-      if (!albumExists) {
-        throw new NotFoundException(`Album with id ${albumId} does not exist.`);
+      const artistExists = this.relationService.hasAlbum(albumId);
+      if (!artistExists) {
+        throw new NotFoundException(
+          `Album with id ${artistId} does not exist.`,
+        );
       }
     }
 

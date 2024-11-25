@@ -1,12 +1,9 @@
 import { Module, forwardRef } from '@nestjs/common';
-// import { ArtistModule } from 'src/modules/artist/artist.module';
-// import { AlbumModule } from 'src/modules/album/album.module';
-// import { TrackModule } from 'src/modules/track/track.module';
+import { RelationModule } from '../relation/relation.module';
 import { FavService } from './fav.service';
 import { FavController } from './fav.controller';
 import { FavInMemoryStorage } from './store/fav-in-memory.storage';
 import { FavInPostgresStorage } from './store/fav-in-postgres.storage';
-import { RelationModule } from '../relation/relation.module';
 import { PrismaModule } from '../prisma/prisma.module';
 
 @Module({

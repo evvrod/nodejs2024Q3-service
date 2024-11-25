@@ -5,7 +5,6 @@ import {
 } from '@nestjs/common';
 import { IUserStore } from '../interfaces/user-store.interface';
 import { CreateUserDto } from 'src/modules/user/dto/create-user.dto';
-import { ResponseUserDto } from 'src/modules/user/dto/user-response.dto';
 import { UpdatePasswordDto } from 'src/modules/user/dto/update-password.dto';
 import { User } from 'src/modules/user/entities/user.entity';
 import { v4 as uuidv4 } from 'uuid';
@@ -15,7 +14,7 @@ export class UserInMemoryStorage implements IUserStore {
   private users: User[] = [];
 
   async getAllUsers() {
-    return this.users.map((el) => this.getUserWithoutPassword(el));
+    return this.users;
   }
 
   async getUserById(id: string) {
@@ -25,7 +24,17 @@ export class UserInMemoryStorage implements IUserStore {
       throw new NotFoundException('User not found');
     }
 
-    return this.getUserWithoutPassword(user);
+    return user;
+  }
+
+  async getUserByLogin(login: string) {
+    const user = this.users.find((user) => user.login === login);
+
+    if (!user) {
+      throw new NotFoundException('User not found');
+    }
+
+    return user;
   }
 
   async createUser(createUserDto: CreateUserDto) {
@@ -40,11 +49,11 @@ export class UserInMemoryStorage implements IUserStore {
     };
     this.users.push(newUser);
 
-    return this.getUserWithoutPassword(newUser);
+    return newUser;
   }
 
   async updatePassword(id: string, updatePasswordDto: UpdatePasswordDto) {
-    const user = this.getUserByIdWithPass(id);
+    const user = await this.getUserById(id);
 
     if (!user) {
       throw new NotFoundException('User not found');
@@ -58,7 +67,7 @@ export class UserInMemoryStorage implements IUserStore {
     user.version += 1;
     user.updatedAt = Date.now();
 
-    return this.getUserWithoutPassword(user);
+    return user;
   }
 
   async deleteUser(id: string) {
@@ -69,15 +78,5 @@ export class UserInMemoryStorage implements IUserStore {
     }
 
     this.users.splice(index, 1);
-  }
-
-  private getUserWithoutPassword(user: User): ResponseUserDto {
-    const userWithoutPassword = { ...user };
-    delete userWithoutPassword.password;
-    return userWithoutPassword;
-  }
-
-  private getUserByIdWithPass(id: string) {
-    return this.users.find((user) => user.id === id);
   }
 }

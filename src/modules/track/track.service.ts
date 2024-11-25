@@ -3,9 +3,15 @@ import { CreateTrackDto } from './dto/create-track.dto';
 import { UpdateTrackDto } from './dto/update-track.dto';
 import { ITrackStore } from './interfaces/track-store.interface';
 
+import { EventEmitter2 } from '@nestjs/event-emitter';
+import { OnEvent } from '@nestjs/event-emitter';
+
 @Injectable()
 export class TrackService {
-  constructor(@Inject('ITrackStore') private storage: ITrackStore) {}
+  constructor(
+    @Inject('ITrackStore') private storage: ITrackStore,
+    private readonly eventEmitter: EventEmitter2,
+  ) {}
 
   async create(createTrackDto: CreateTrackDto) {
     return await this.storage.createTrack(createTrackDto);
@@ -24,14 +30,17 @@ export class TrackService {
   }
 
   async remove(id: string) {
+    this.eventEmitter.emit('track.deleted', id);
     return await this.storage.deleteTrack(id);
   }
 
-  async removeArtistReferences(artistId: string) {
-    await this.storage.removeArtistReferences(artistId);
+  @OnEvent('album.deleted')
+  async handleAlbumDeleted(id: string, albumId: string) {
+    await this.storage.removeAlbumReferences(albumId);
   }
 
-  async removeAlbumReferences(albumId: string) {
-    await this.storage.removeAlbumReferences(albumId);
+  @OnEvent('artist.deleted')
+  async handleArtistDeleted(id: string, artistId: string) {
+    await this.storage.removeArtistReferences(artistId);
   }
 }

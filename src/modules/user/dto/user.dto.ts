@@ -1,7 +1,8 @@
 import { IsNotEmpty, IsString, IsUUID } from 'class-validator';
 import { ApiProperty } from '@nestjs/swagger';
+import { User } from '../entities/user.entity';
 
-export class ResponseUserDto {
+export class UserDto {
   @ApiProperty({
     description: 'Unique identifier of the user',
     type: String,
@@ -41,4 +42,12 @@ export class ResponseUserDto {
     example: 1655000000,
   })
   updatedAt: number;
+
+  constructor(user: User) {
+    this.id = user.id;
+    this.login = user.login;
+    this.version = user.version;
+    this.createdAt = Number(user.createdAt);
+    this.updatedAt = Number(user.updatedAt);
+  }
 }

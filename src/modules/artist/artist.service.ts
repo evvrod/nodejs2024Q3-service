@@ -3,9 +3,14 @@ import { CreateArtistDto } from './dto/create-artist.dto';
 import { UpdateArtistDto } from './dto/update-artist.dto';
 import { IArtistStore } from './interfaces/artist-store.interface';
 
+import { EventEmitter2 } from '@nestjs/event-emitter';
+
 @Injectable()
 export class ArtistService {
-  constructor(@Inject('IArtistStore') private storage: IArtistStore) {}
+  constructor(
+    @Inject('IArtistStore') private storage: IArtistStore,
+    private readonly eventEmitter: EventEmitter2,
+  ) {}
 
   async create(createUserDto: CreateArtistDto) {
     return await this.storage.createArtist(createUserDto);
@@ -24,6 +29,7 @@ export class ArtistService {
   }
 
   async remove(id: string) {
+    this.eventEmitter.emit('artist.deleted', id);
     return await this.storage.deleteArtist(id);
   }
 }

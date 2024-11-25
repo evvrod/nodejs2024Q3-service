@@ -11,39 +11,36 @@ import { IFavStore } from '../interfaces/fav-store.interface';
 export class FavInPostgresStorage implements IFavStore {
   constructor(private readonly prisma: PrismaService) {}
 
-  async onModuleInit() {
-    const DEV_USER_ID = '1';
-    await this.createFavoritesForUser(DEV_USER_ID);
-  }
-
   async createFavoritesForUser(id: string) {
     const existingFavorites = await this.prisma.fav.findUnique({
       where: { idUser: id },
     });
 
-    if (!existingFavorites) {
-      const newFavorites = await this.prisma.fav.create({
-        data: {
-          idUser: id,
-          artists: {
-            connect: [],
+    try {
+      if (!existingFavorites) {
+        const fav = await this.prisma.fav.create({
+          data: {
+            idUser: id,
+            artists: {
+              connect: [],
+            },
+            albums: {
+              connect: [],
+            },
+            tracks: {
+              connect: [],
+            },
           },
-          albums: {
-            connect: [],
-          },
-          tracks: {
-            connect: [],
-          },
-        },
-      });
-      return newFavorites;
+        });
+      }
+    } catch {
+      throw new UnprocessableEntityException(
+        `Favorites for user with id ${id}could not be created`,
+      );
     }
-
-    return existingFavorites;
   }
 
-  async getAllFavorites() {
-    const id = '1';
+  async getAllFavorites(id: string) {
     const favorites = await this.prisma.fav.findUnique({
       where: { idUser: id },
       include: {
@@ -60,9 +57,7 @@ export class FavInPostgresStorage implements IFavStore {
     return favorites;
   }
 
-  async hasArtistInFavorites(artistId: string) {
-    const id = '1';
-
+  async hasArtistInFavorites(id: string, artistId: string) {
     const favorite = await this.prisma.fav.findUnique({
       where: { idUser: id },
       include: { artists: true },
@@ -71,9 +66,7 @@ export class FavInPostgresStorage implements IFavStore {
     return favorite?.artists.some((artist) => artist.id === artistId);
   }
 
-  async hasAlbumInFavorites(albumId: string) {
-    const id = '1';
-
+  async hasAlbumInFavorites(id: string, albumId: string) {
     const favorite = await this.prisma.fav.findUnique({
       where: { idUser: id },
       include: { albums: true },
@@ -82,9 +75,7 @@ export class FavInPostgresStorage implements IFavStore {
     return favorite?.albums.some((album) => album.id === albumId);
   }
 
-  async hasTrackInFavorites(trackId: string) {
-    const id = '1';
-
+  async hasTrackInFavorites(id: string, trackId: string) {
     const favorite = await this.prisma.fav.findUnique({
       where: { idUser: id },
       include: { tracks: true },
@@ -93,9 +84,7 @@ export class FavInPostgresStorage implements IFavStore {
     return favorite?.tracks.some((track) => track.id === trackId);
   }
 
-  async addTrackToFavorites(trackId: string) {
-    const id = '1';
-
+  async addTrackToFavorites(id: string, trackId: string) {
     const track = await this.prisma.track.findUnique({
       where: { id: trackId },
     });
@@ -116,18 +105,17 @@ export class FavInPostgresStorage implements IFavStore {
     });
   }
 
-  async removeTrackFromFavorites(trackId: string) {
-    const id = '1';
-
+  async removeTrackFromFavorites(id: string, trackId: string) {
     const favorite = await this.prisma.fav.findUnique({
       where: { idUser: id },
       include: { tracks: true },
     });
 
     if (!favorite || !favorite.tracks.some((track) => track.id === trackId)) {
-      throw new NotFoundException(
-        `Track with id ${trackId} is not in favorites`,
-      );
+      return;
+      // throw new NotFoundException(
+      //   `Track with id ${trackId} is not in favorites`,
+      // );
     }
 
     await this.prisma.fav.update({
@@ -140,9 +128,7 @@ export class FavInPostgresStorage implements IFavStore {
     });
   }
 
-  async addAlbumToFavorites(albumId: string) {
-    const id = '1';
-
+  async addAlbumToFavorites(id: string, albumId: string) {
     const album = await this.prisma.album.findUnique({
       where: { id: albumId },
     });
@@ -163,17 +149,17 @@ export class FavInPostgresStorage implements IFavStore {
     });
   }
 
-  async removeAlbumFromFavorites(albumId: string) {
-    const id = '1';
+  async removeAlbumFromFavorites(id: string, albumId: string) {
     const favorite = await this.prisma.fav.findUnique({
       where: { idUser: id },
       include: { albums: true },
     });
 
     if (!favorite || !favorite.albums.some((album) => album.id === albumId)) {
-      throw new NotFoundException(
-        `Album with id ${albumId} is not in favorites`,
-      );
+      return;
+      // throw new NotFoundException(
+      //   `Album with id ${albumId} is not in favorites`,
+      // );
     }
 
     await this.prisma.fav.update({
@@ -186,9 +172,7 @@ export class FavInPostgresStorage implements IFavStore {
     });
   }
 
-  async addArtistToFavorites(artistId: string) {
-    const id = '1';
-
+  async addArtistToFavorites(id: string, artistId: string) {
     const artist = await this.prisma.artist.findUnique({
       where: { id: artistId },
     });
@@ -209,9 +193,7 @@ export class FavInPostgresStorage implements IFavStore {
     });
   }
 
-  async removeArtistFromFavorites(artistId: string) {
-    const id = '1';
-
+  async removeArtistFromFavorites(id: string, artistId: string) {
     const favorite = await this.prisma.fav.findUnique({
       where: { idUser: id },
       include: { artists: true },
@@ -221,9 +203,10 @@ export class FavInPostgresStorage implements IFavStore {
       !favorite ||
       !favorite.artists.some((artist) => artist.id === artistId)
     ) {
-      throw new NotFoundException(
-        `Artist with id ${artistId} is not in favorites`,
-      );
+      return;
+      // throw new NotFoundException(
+      //   `Artist with id ${artistId} is not in favorites`,
+      // );
     }
 
     await this.prisma.fav.update({

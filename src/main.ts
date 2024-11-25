@@ -3,6 +3,8 @@ import { ConfigService } from '@nestjs/config';
 
 import { AppModule } from './app.module';
 import { SwaggerConfig } from './modules/swagger/swagger.module';
+import { LoggingService } from './modules/logging/logging.service';
+import { AllExceptionsFilter } from './modules/logging/exception.filter';
 
 async function bootstrap() {
   const configService = await NestFactory.create(AppModule).then((app) =>
@@ -18,11 +20,34 @@ async function bootstrap() {
 
   SwaggerConfig.setup(app);
 
+  // Получаем LoggingService
+  const loggingService = app.get(LoggingService);
+
+  // Регистрация глобальных слушателей для uncaughtException и unhandledRejection
+  process.on('uncaughtException', (err) => {
+    loggingService.error(`Uncaught Exception: ${err.message}`, err.stack);
+    process.exit(1);
+  });
+
+  process.on('unhandledRejection', (reason: any) => {
+    loggingService.error(`Unhandled Rejection: ${reason}`);
+    process.exit(1);
+  });
+
+  // Регистрация кастомного фильтра ошибок для глобального перехвата
+  app.useGlobalFilters(new AllExceptionsFilter(loggingService));
+
+  app.enableCors({
+    allowedHeaders: 'Authorization, Content-Type',
+  });
   await app.listen(port);
-  console.log(`Application is running on: http://localhost:${port}`);
-  console.log(
+  loggingService.debug(`Application is running on: http://localhost:${port}`);
+  loggingService.debug(
     `API Documentation is available on: http://localhost:${port}/api-docs`,
   );
-  console.log(`${useInMemoryDb ? 'In-memory' : 'PostgreSQL'} database is used`);
+  loggingService.debug(
+    `${useInMemoryDb ? 'In-memory' : 'PostgreSQL'} database is used`,
+  );
 }
+
 bootstrap();
