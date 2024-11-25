@@ -15,13 +15,13 @@ export class LoggingService implements ILogging {
   private readonly logFilePath = join(this.logDirectory, 'application.log');
   private readonly errorLogFilePath = join(this.logDirectory, 'errors.log');
 
-  private readonly logLevel = process.env.LOG_LEVEL || 'info';
+  private readonly logLevel = parseInt(process.env.LOG_LEVEL || '2', 10);
   private readonly maxFileSize = parseInt(
     process.env.LOG_FILE_SIZE || '1024',
     10,
   );
 
-  private readonly levels = ['debug', 'info', 'warn', 'error'];
+  private readonly levels = ['debug', 'log', 'info', 'warn', 'error'];
 
   constructor() {
     this.ensureLogDirectory();
@@ -49,7 +49,9 @@ export class LoggingService implements ILogging {
   }
 
   private logMessage(level: string, message: string, trace?: string): void {
-    if (this.levels.indexOf(level) >= this.levels.indexOf(this.logLevel)) {
+    const levelIndex = this.levels.indexOf(level);
+
+    if (levelIndex >= this.logLevel) {
       const logEntry = `[${new Date().toISOString()}] [${level.toUpperCase()}] ${message}`;
       if (trace) {
         console.error(logEntry);
@@ -57,10 +59,7 @@ export class LoggingService implements ILogging {
         console.log(logEntry);
       }
 
-      this.writeToFile(
-        this.logFilePath,
-        trace ? `${logEntry}\nTrace: ${trace}` : logEntry,
-      );
+      this.writeToFile(this.logFilePath, logEntry);
 
       if (level === 'error') {
         this.writeToFile(

@@ -93,7 +93,11 @@ export class AuthService {
         secret: this.jwtSecretRefresh,
       });
 
+      console.log(decoded);
+
       const tokens = await this.generateTokens(decoded.userId, decoded.login);
+      console.log(tokens);
+
       return tokens;
     } catch {
       throw new ForbiddenException('Invalid or expired refresh token');
