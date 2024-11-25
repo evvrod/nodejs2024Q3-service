@@ -23,6 +23,7 @@ export class AuthGuard implements CanActivate {
     }
 
     const authHeader = request.headers.authorization;
+    console.log(authHeader);
     if (!authHeader || !authHeader.startsWith('Bearer ')) {
       throw new UnauthorizedException(
         'Missing or invalid authorization header',
@@ -31,9 +32,12 @@ export class AuthGuard implements CanActivate {
 
     const token = authHeader.split(' ')[1];
     try {
+      console.log('!!!!!!!!!!!!!!!!');
+      console.log(process.env.JWT_SECRET_KEY);
       const decoded = this.jwtService.verify(token, {
         publicKey: process.env.JWT_SECRET_KEY,
       });
+      console.log(decoded);
       request.info = decoded;
       return true;
     } catch {

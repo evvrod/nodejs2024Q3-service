@@ -11,13 +11,10 @@ import { ILogging } from './interfaces/logging.interface';
 
 @Injectable()
 export class LoggingService implements ILogging {
-  private readonly logFilePath = join(
-    __dirname,
-    '..',
-    '..',
-    'logs',
-    'application.log',
-  );
+  private readonly logDirectory = join(__dirname, '..', '..', 'logs');
+  private readonly logFilePath = join(this.logDirectory, 'application.log');
+  private readonly errorLogFilePath = join(this.logDirectory, 'errors.log');
+
   private readonly logLevel = process.env.LOG_LEVEL || 'info';
   private readonly maxFileSize = parseInt(
     process.env.LOG_FILE_SIZE || '1024',
@@ -30,32 +27,27 @@ export class LoggingService implements ILogging {
     this.ensureLogDirectory();
   }
 
-  // Убедиться, что директория для логов существует
   private ensureLogDirectory(): void {
-    const logDir = join(__dirname, '..', '..', '..', 'logs');
-    if (!existsSync(logDir)) {
-      mkdirSync(logDir);
+    if (!existsSync(this.logDirectory)) {
+      mkdirSync(this.logDirectory);
     }
   }
 
-  // Проверить и выполнить ротацию файла
-  private checkFileRotation(): void {
-    if (existsSync(this.logFilePath)) {
-      const stats = statSync(this.logFilePath);
+  private checkFileRotation(filePath: string): void {
+    if (existsSync(filePath)) {
+      const stats = statSync(filePath);
       if (stats.size > this.maxFileSize * 1024) {
-        const rotatedFilePath = `${this.logFilePath}.${Date.now()}`;
-        renameSync(this.logFilePath, rotatedFilePath);
+        const rotatedFilePath = `${filePath}.${Date.now()}`;
+        renameSync(filePath, rotatedFilePath);
       }
     }
   }
 
-  // Записать сообщение в файл
-  private writeToFile(message: string): void {
-    this.checkFileRotation();
-    appendFileSync(this.logFilePath, `${message}\n`);
+  private writeToFile(filePath: string, message: string): void {
+    this.checkFileRotation(filePath);
+    appendFileSync(filePath, `${message}\n`);
   }
 
-  // Общий метод для логирования
   private logMessage(level: string, message: string, trace?: string): void {
     if (this.levels.indexOf(level) >= this.levels.indexOf(this.logLevel)) {
       const logEntry = `[${new Date().toISOString()}] [${level.toUpperCase()}] ${message}`;
@@ -64,7 +56,18 @@ export class LoggingService implements ILogging {
       } else {
         console.log(logEntry);
       }
-      this.writeToFile(trace ? `${logEntry}\nTrace: ${trace}` : logEntry);
+
+      this.writeToFile(
+        this.logFilePath,
+        trace ? `${logEntry}\nTrace: ${trace}` : logEntry,
+      );
+
+      if (level === 'error') {
+        this.writeToFile(
+          this.errorLogFilePath,
+          trace ? `${logEntry}\nTrace: ${trace}` : logEntry,
+        );
+      }
     }
   }
 
